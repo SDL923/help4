@@ -1,0 +1,1 @@
+streamlit>=1.51   # st.components.v2 필요 (회사 환경 1.58 기준으로 테스트함)
