@@ -32,14 +32,7 @@
     font: 13px/1.45 "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
   }
 
-  /* 실제 배포 화면의 왼쪽 사이드바 자리 (내용 없음). 폭은 --sidebar-w로 조정 */
-  :root { --sidebar-w: 300px; }
   .app { display: flex; min-height: 100vh; }
-  .sidebar {
-    flex: none; width: var(--sidebar-w);
-    position: sticky; top: 0; height: 100vh;
-    background: #f0f2f6; border-right: 1px solid var(--border);
-  }
   .content { flex: 1; min-width: 1100px; }
 
   /* ---------- top bar ---------- */
@@ -84,8 +77,9 @@
   .st.sched, .st.none { color: var(--gray); font-weight: 400; }
 
   /* ---------- (1) pipeline grid ---------- */
-  table.pgrid { width: auto; border-collapse: separate; border-spacing: 0; }
+  table.pgrid { width: 380px; table-layout: fixed; border-collapse: separate; border-spacing: 0; }
   .pgrid th, .pgrid td { text-align: center; padding: 0; }
+  .pgrid th.prod-h { width: 72px; }   /* 제품 열 고정, 나머지 7열은 균등 */
   .pgrid thead th {
     font-weight: 500; font-size: 11px; color: var(--text2);
     padding: 6px 3px; line-height: 1.25; font-family: var(--mono); font-size: 10px;
@@ -271,7 +265,7 @@
   .wsum span { display: inline-flex; align-items: center; gap: 5px; }
   .wsum b { font: 600 13px var(--mono); color: var(--text); }
   .wsum .pd, .card .pd { width: 8px; height: 8px; }
-  .cal { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
   .cal-col { border-right: 1px solid var(--border-soft); min-height: 150px; padding: 0 6px 8px; display: flex; flex-direction: column; gap: 6px; }
   .cal-col:last-child { border-right: 0; }
   .cal-col.today { background: var(--cur-col); }
@@ -295,6 +289,50 @@
   .wd.up { color: var(--warn); }
   .wd.down { color: var(--ok); }
 
+  /* 발행 현황 탭 */
+  .viewbar.seg { margin: 0 0 0 auto; }
+
+  /* 이번 주 요약: 구역 제목 */
+  .wsec { display: flex; align-items: baseline; gap: 10px; margin: 2px 0 8px; }
+  .wsec > b { font-size: 13px; }
+  .wsec .sub { color: var(--text3); font-size: 12px; }
+  .wsec.second { margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--border-soft); }
+
+  /* 이번 주 raw_data */
+  .rsum { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .rs-col { border-right: 1px solid var(--border-soft); padding: 0 6px 8px; display: flex; flex-direction: column; gap: 6px; min-height: 84px; }
+  .rs-col:last-child { border-right: 0; }
+  .rs-col.today { background: var(--cur-col); }
+  .rs-col.today .cal-h { background: var(--run-bg); color: var(--run); }
+  .rs-col.today .cal-h span { color: var(--run); }
+  .rs-dots { display: flex; flex-wrap: wrap; gap: 4px; }
+  .rs-dots .pd { width: 9px; height: 9px; }
+  .rs-dots .pd.sel { box-shadow: 0 0 0 1.5px #fff, 0 0 0 3px var(--text); }
+  .chip { font-size: 11px; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border); background: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chip b { font-weight: 600; }
+  .chip.fail { background: var(--fail-bg); border-color: #ffcecb; color: var(--fail); }
+  .chip.run { border-color: #b6d7ff; color: var(--run); }
+  .chip.sched { border-style: dashed; color: var(--text2); background: transparent; }
+  .chip.none { color: var(--text3); }
+  .chip[data-rpick] { cursor: pointer; }
+  .chip[data-rpick]:hover { border-color: var(--accent); }
+  .rs-note { font-size: 11px; color: var(--text3); }
+  .rs-note.ok { color: var(--ok); }
+
+  /* raw_data 상세 */
+  .rleft { min-width: 300px; }
+  .r7s { display: flex; gap: 4px; margin-bottom: 14px; }
+  .r7 { width: 40px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 5px 0; border-radius: 5px; border: 1px solid transparent; }
+  .r7 .d { font-size: 11px; color: var(--text3); }
+  .r7 .v { font: 10px var(--mono); color: var(--text2); }
+  .r7.pick { cursor: pointer; }
+  .r7.pick:hover { background: #f6f8fa; }
+  .r7.on { border-color: var(--text); background: #fafbfc; }
+  .kv { display: grid; grid-template-columns: 68px 1fr; gap: 6px 12px; margin: 0; font-size: 12px; }
+  .kv dt { color: var(--text3); }
+  .kv dd { margin: 0; color: var(--text); }
+  .kv .nfail { color: var(--fail); }
+
   /* scheduled state */
   .sched-box {
     border: 1px dashed var(--border); border-radius: 8px; padding: 40px 20px;
@@ -309,26 +347,6 @@
     color: var(--text2); font-size: 12px;
   }
 
-  /* ---------- (3) raw_data ---------- */
-  table.rawt { width: 100%; border-collapse: collapse; }
-  .rawt th {
-    text-align: left; font-weight: 500; font-size: 11px; color: var(--text3);
-    padding: 0 12px 8px; border-bottom: 1px solid var(--border);
-  }
-  .rawt td { padding: 9px 12px; border-bottom: 1px solid var(--border-soft); }
-  .rawt tr:last-child td { border-bottom: none; }
-  .rawt td.prod { font-weight: 600; width: 120px; }
-  .rawt td.stc { width: 140px; }
-  .rawt td.stc .lbl { margin-left: 6px; color: var(--text2); font-size: 12px; }
-  .rawt td.dur { width: 160px; font-family: var(--mono); font-size: 12px; }
-  .rawt td.dur .k { color: var(--text3); font-family: inherit; margin-right: 6px; }
-  .rawt td.next { width: 160px; font-family: var(--mono); font-size: 12px; color: var(--text2); }
-  .rawt td.note { color: var(--text2); }
-  .rawt tr.r-fail td.note { color: var(--fail); }
-  .rawt tr.r-fail { background: #fffafa; }
-  .rawsum { display: flex; gap: 14px; font-size: 12px; color: var(--text2); }
-  .rawsum b { font-family: var(--mono); }
-
   /* ---------- tooltip ---------- */
   #tip {
     position: fixed; z-index: 100; pointer-events: none; display: none;
@@ -340,26 +358,23 @@
 <body>
 
 <div class="app">
-<aside class="sidebar" aria-hidden="true"></aside>
 <div class="content">
 
 <header class="topbar">
   <div class="brand">DPM</div>
-  <nav class="tabs">
-    <div class="tab active">1 · 운영 현황</div>
-    <div class="tab disabled">2 · 리소스 추이</div>
-    <div class="tab disabled">3 · 실행 이력</div>
-  </nav>
   <div class="meta" id="meta"></div>
 </header>
 
 <main>
-  <!-- (1) pipeline 발행 현황 -->
+  <!-- (1) 발행 현황: pipeline / raw_data 전환 -->
   <section class="panel" id="p1">
     <div class="panel-head">
-      <h2>pipeline 발행 현황</h2>
+      <h2>발행 현황</h2>
+      <div class="viewbar seg" id="dagtab">
+        <button data-tab="pipeline">pipeline</button><button data-tab="raw">raw_data</button>
+      </div>
     </div>
-    <table class="pgrid" id="pgrid"></table>
+    <div id="gridbox"><table class="pgrid" id="pgrid"></table></div>
     <div class="panel-foot">
       <div class="legend" id="legend1"></div>
 
@@ -368,9 +383,6 @@
 
   <!-- (2) 선택 제품 상세 -->
   <section class="panel" id="p2"></section>
-
-  <!-- (3) raw_data 오늘 -->
-  <section class="panel full" id="p3"></section>
 </main>
 
 </div>
@@ -388,7 +400,7 @@ const MOCK = {
   now: '2026-11-04T07:30:00',
 
   pipeline: {
-    weeks: 6,   // 표시할 주 수. history는 뒤에서부터 이 개수만큼 사용
+    weeks: 7,   // 표시할 주 수. history는 뒤에서부터 이 개수만큼 사용
     // history: 오래된 주 → 이번 주 순서, 8칸
     products: [
       { name: 'PBEQ', clickable: true,  history: ['ok','ok','ok','fail','ok','ok','ok','run'] },
@@ -513,18 +525,34 @@ const MOCK = {
     PBHS: '금 02:00',
   },
 
+  // raw_data: 전 제품 매일 1회
   rawData: {
-    // phase: 'done' 소요 / 'elapsed' 경과
-    rows: [
-      { name: 'PBEQ', status: 'ok',    dur: '38분',    phase: 'done',    next: '내일 01:00', note: '' },
-      { name: 'PBEJ', status: 'ok',    dur: '41분',    phase: 'done',    next: '내일 01:00', note: '' },
-      { name: 'PBEK', status: 'run',   dur: '1시간 12분', phase: 'elapsed', next: '내일 01:00', note: '평소 대비 +20분' },
-      { name: 'PBEM', status: 'fail',  dur: '7분',     phase: 'done',    next: '오늘 09:00 (재시도)', note: 'source table 미도착 · 재시도 1/3' },
-      { name: 'PBFA', status: 'ok',    dur: '29분',    phase: 'done',    next: '내일 01:00', note: '' },
-      { name: 'PBFC', status: 'sched', dur: '',        phase: '',        next: '오늘 08:00', note: '' },
-      { name: 'PBGD', status: 'ok',    dur: '52분',    phase: 'done',    next: '내일 01:00', note: '' },
-      { name: 'PBGH', status: 'none',  dur: '',        phase: '',        next: '내일 01:00', note: '원천 시스템 점검으로 오늘 skip' },
+    days: 7,   // 표시할 일 수 (오늘 포함)
+    // history: 오래된 날 → 오늘 순서
+    products: [
+      { name: 'PBEQ', history: ['ok','ok','ok','ok','ok','ok','ok'] },
+      { name: 'PBEJ', history: ['ok','ok','fail','ok','ok','ok','ok'] },
+      { name: 'PBEK', history: ['ok','ok','ok','ok','ok','ok','run'] },
+      { name: 'PBEM', history: ['ok','ok','ok','ok','ok','fail','fail'] },
+      { name: 'PBFA', history: ['ok','ok','ok','ok','ok','ok','ok'] },
+      { name: 'PBFC', history: ['ok','ok','ok','ok','ok','ok','sched'] },
+      { name: 'PBGD', history: ['ok','ok','ok','fail','ok','ok','ok'] },
+      { name: 'PBGH', history: ['ok','ok','ok','ok','ok','ok','none'] },
     ],
+    // 지난 실행의 소요·리소스를 만드는 범위 (목업 생성용)
+    profile: { dur: [25, 60], memReq: 16, memLim: 24, mem: [0.40, 0.92], cpuReq: 1.0, cpuLim: 2.0, cpu: [0.5, 1.5] },
+    // 오늘 실행 정보. start: 시작(예정) 시각, durMin: 소요 또는 경과(분), pod: 실행 중 리소스
+    today: {
+      PBEQ: { start: '01:00', durMin: 38, next: '내일 01:00' },
+      PBEJ: { start: '01:00', durMin: 41, next: '내일 01:00' },
+      PBEK: { start: '06:18', durMin: 72, next: '내일 01:00', note: '평소 대비 +20분',
+              pod: { mem: { use: 12.4, req: 16, lim: 24 }, cpu: { use: 1.1, req: 1.0, lim: 2.0 } } },
+      PBEM: { start: '01:00', durMin: 7, next: '오늘 09:00 (재시도)', note: 'source table 미도착 · 재시도 1/3' },
+      PBFA: { start: '01:00', durMin: 29, next: '내일 01:00' },
+      PBFC: { start: '08:00', next: '오늘 08:00' },
+      PBGD: { start: '01:00', durMin: 52, next: '내일 01:00' },
+      PBGH: { next: '내일 01:00', note: '원천 시스템 점검으로 오늘 skip' },
+    },
   },
 };
 
@@ -541,7 +569,8 @@ const DOW = ['일','월','화','수','목','금','토'];
 const pad = n => String(n).padStart(2, '0');
 const md = d => `${pad(d.getMonth() + 1)}/${pad(d.getDate())}`;
 const NOW = new Date(MOCK.now);
-let selected = null;   // { name, w } — 발행 현황의 칸(제품 × 주차). null이면 이번 주 요약
+let tab = 'pipeline';  // 발행 현황 탭: pipeline | raw
+let selected = null;   // { kind: 'pipe'|'raw', name, w } — 발행 현황의 칸. w = 주차/일자 index. null이면 이번 주 요약
 
 function weekRanges(n) {
   const mon = new Date(NOW);
@@ -575,7 +604,57 @@ function legendHtml() {
 }
 
 /* ---------- (1) ---------- */
+// 발행 현황: 탭에 맞는 격자를 그림
 function renderPipeline() {
+  document.querySelectorAll('#dagtab button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+  if (tab === 'raw') renderRawGrid(); else renderPipeGrid();
+  const t = document.getElementById('pgrid');
+  t.querySelectorAll('td.pick').forEach(td => td.addEventListener('click', () => {
+    const [kind, name, w] = td.dataset.cellpick.split('|');
+    const same = selected && selected.kind === kind && selected.name === name && selected.w === +w;
+    selected = same ? null : { kind, name, w: +w };
+    focus = null;
+    renderPipeline();
+    renderDetail();
+  }));
+}
+
+// raw_data: 제품 × 최근 N일
+function rawDays() {
+  const n = MOCK.rawData.days;
+  return Array.from({ length: n }, (_, i) => {
+    const d = new Date(NOW);
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() - (n - 1 - i));
+    return d;
+  });
+}
+
+function renderRawGrid() {
+  const R = MOCK.rawData, days = rawDays(), last = days.length - 1;
+  let h = '<thead><tr><th class="prod-h">제품</th>';
+  days.forEach((d, i) => {
+    h += `<th class="${i === last ? 'cur' : ''}">${md(d)}<br><span class="end">${DOW[d.getDay()]}</span></th>`;
+  });
+  h += '</tr></thead><tbody>';
+  R.products.forEach(p => {
+    const selRow = selected && selected.kind === 'raw' && selected.name === p.name;
+    h += `<tr class="clickable ${selRow ? 'selected' : ''}"><td class="prod">${p.name}</td>`;
+    p.history.slice(-R.days).forEach((st, i) => {
+      const run = getRawRun(p.name, i);
+      const sel = selRow && selected.w === i;
+      const extra = run ? ` · ${st === 'run' ? '경과' : '소요'} ${fmtElapsed(run.durMin)}` : '';
+      const tcls = [i === last && 'cur', run && 'pick', sel && 'sel'].filter(Boolean).join(' ');
+      h += `<td class="${tcls}" ${run ? `data-cellpick="raw|${p.name}|${i}"` : ''} data-tip="${p.name} · ${md(days[i])} (${DOW[days[i].getDay()]})\n${ST[st].label}${extra}${run ? '\n클릭 → 실행 상세' : ''}"><i class="pd ${st}"></i></td>`;
+    });
+    h += '</tr>';
+  });
+  h += '</tbody>';
+  document.getElementById('pgrid').innerHTML = h;
+}
+
+// pipeline: 제품 × 최근 N주
+function renderPipeGrid() {
   const weeks = weekRanges(MOCK.pipeline.weeks);
   const last = weeks.length - 1;
   let h = '<thead><tr><th class="prod-h">제품</th>';
@@ -584,31 +663,22 @@ function renderPipeline() {
   });
   h += '</tr></thead><tbody>';
   MOCK.pipeline.products.forEach(p => {
-    const cls = [p.clickable && 'clickable', selected && p.name === selected.name && 'selected'].filter(Boolean).join(' ');
-    const prog = p.clickable ? `<span class="prog">${moduleProgress(p.name)}</span>` : '';
+    const cls = [p.clickable && 'clickable', selected && selected.kind === 'pipe' && p.name === selected.name && 'selected'].filter(Boolean).join(' ');
+    const prog = '';   // 모듈 진행률 표시는 뺌
     h += `<tr class="${cls}" data-name="${p.name}"><td class="prod">${p.name}${prog}</td>`;
     p.history.slice(-MOCK.pipeline.weeks).forEach((s, i) => {
       // 진행중이면 툴팁에 전체 경과 시간 추가
       const d = MOCK.detail[p.name];
       const tipRun = s === 'run' && d && d.elapsedMin ? ` · 경과 ${fmtElapsed(d.elapsedMin)}` : '';
       const pick = !!getRun(p.name, i);
-      const sel = selected && selected.name === p.name && selected.w === i;
+      const sel = selected && selected.kind === 'pipe' && selected.name === p.name && selected.w === i;
       const tcls = [i === last && 'cur', pick && 'pick', sel && 'sel'].filter(Boolean).join(' ');
-      h += `<td class="${tcls}" ${pick ? `data-cellpick="${p.name}|${i}"` : ''} data-tip="${p.name} · ${weeks[i].start}~${weeks[i].end}\n${ST[s].label}${tipRun}${pick ? '\n클릭 → 실행 상세' : ''}"><i class="pd ${s}"></i></td>`;
+      h += `<td class="${tcls}" ${pick ? `data-cellpick="pipe|${p.name}|${i}"` : ''} data-tip="${p.name} · ${weeks[i].start}~${weeks[i].end}\n${ST[s].label}${tipRun}${pick ? '\n클릭 → 실행 상세' : ''}"><i class="pd ${s}"></i></td>`;
     });
     h += '</tr>';
   });
   h += '</tbody>';
-  const t = document.getElementById('pgrid');
-  t.innerHTML = h;
-  t.querySelectorAll('td.pick').forEach(td => td.addEventListener('click', () => {
-    const [name, w] = td.dataset.cellpick.split('|');
-    const same = selected && selected.name === name && selected.w === +w;
-    selected = same ? null : { name, w: +w };
-    focus = null;
-    renderPipeline();
-    renderDetail();
-  }));
+  document.getElementById('pgrid').innerHTML = h;
 }
 
 /* ---------- (2) ---------- */
@@ -853,7 +923,7 @@ function getRun(name, w) {
 // 이번 주 요약 (제품 선택 전 기본 화면) — 요일 달력
 function renderWeek() {
   const el = document.getElementById('p2');
-  const DAYS = ['월', '화', '수', '목', '금'];   // 주말 실행 없음
+  const DAYS = ['월', '화', '수', '목', '금', '토', '일'];
   const mon = new Date(NOW);
   mon.setHours(0, 0, 0, 0);
   mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
@@ -876,7 +946,7 @@ function renderWeek() {
       }
       if (dur) {
         const diff = Math.round((dur / avg - 1) * 100);
-        info = `${fmtShort(dur)} <span class="wd ${diff > 0 ? 'up' : 'down'}">${diff > 0 ? '+' : ''}${diff}%</span>`;
+        info = fmtShort(dur);   // 평소 대비 %는 뺌
       }
     }
     if (st === 'sched') info = '예정';
@@ -885,19 +955,21 @@ function renderWeek() {
   });
 
   const cnt = st => items.filter(i => i.st === st).length;
-  const fri = new Date(mon);
-  fri.setDate(mon.getDate() + 4);
-  let h = `<div class="panel-head"><h2>이번 주 요약</h2><span class="sub">pipeline · ${md(mon)} ~ ${md(fri)}</span>
+  const sun = new Date(mon);
+  sun.setDate(mon.getDate() + 6);
+  let h = `<div class="panel-head"><h2>이번 주 요약</h2><span class="sub">${md(mon)} ~ ${md(sun)}</span></div>`;
+
+  // pipeline: 요일 달력 (월~금)
+  h += `<div class="wsec"><b>pipeline</b><span class="sub">주 1회</span>
     <div class="wsum">${['ok', 'fail', 'run', 'sched'].map(st =>
       `<span><i class="pd ${st}"></i>${ST[st].label} <b>${cnt(st)}</b></span>`).join('')}</div></div>`;
-
   h += '<div class="cal">';
   DAYS.forEach((dn, i) => {
     const dt = new Date(mon);
     dt.setDate(mon.getDate() + i);
     const list = items.filter(it => it.day === i).sort((x, y) => x.time.localeCompare(y.time));
     h += `<div class="cal-col ${i === todayIdx ? 'today' : ''}">
-      <div class="cal-h">${dn} <span>${md(dt)}</span>${i === todayIdx ? '<em>오늘</em>' : ''}</div>`;
+      <div class="cal-h">${dn} <span>${md(dt)}</span></div>`;
     list.forEach(it => {
       h += `<div class="card ${it.st}${it.pick ? ' pick' : ''}" ${it.pick ? `data-pick="${it.name}"` : ''}
                data-tip="${it.name} · ${dn} ${it.time}\n${ST[it.st].label}${it.pick ? '\n클릭 → 상세' : ''}">
@@ -906,12 +978,138 @@ function renderWeek() {
     });
     h += '</div>';
   });
-  h += '</div><div class="hint" style="margin-top:10px">카드 클릭 → 제품 상세 (상세 데이터가 있는 제품)</div>';
+  h += '</div>';
+
+  h += rawWeekHtml(mon, todayIdx);
+  el.innerHTML = h;
+}
+
+// 이번 주 raw_data: 요일(월~일)마다 제품별 점 + 정상이 아닌 제품만 칩으로
+function rawWeekHtml(mon, todayIdx) {
+  const R = MOCK.rawData, last = R.days - 1;
+  const DAYS7 = ['월', '화', '수', '목', '금', '토', '일'];
+  const tot = { ok: 0, fail: 0, run: 0, sched: 0 };
+  let cols = '';
+  DAYS7.forEach((dn, i) => {
+    const dt = new Date(mon);
+    dt.setDate(mon.getDate() + i);
+    const hi = i <= todayIdx ? last - (todayIdx - i) : -1;   // 최근 N일 history index
+    const rows = R.products.map(p => ({ name: p.name, st: hi >= 0 ? p.history.slice(-R.days)[hi] : 'sched' }));
+    if (hi >= 0) rows.forEach(r => { if (r.st in tot) tot[r.st]++; });   // 앞으로의 날은 세지 않음
+    // 점만 표시 (클릭 이동 없음, 툴팁만)
+    const dots = rows.map(r =>
+      `<i class="pd ${r.st}" data-tip="${r.name} · ${md(dt)} (${dn})\n${ST[r.st].label}"></i>`).join('');
+    cols += `<div class="rs-col ${i === todayIdx ? 'today' : ''}">
+      <div class="cal-h">${dn} <span>${md(dt)}</span></div>
+      <div class="rs-dots">${dots}</div></div>`;
+  });
+  return `<div class="wsec second"><b>raw_data</b><span class="sub">매일 · 전 제품</span>
+      <div class="wsum">${['ok', 'fail', 'run', 'sched'].map(st =>
+        `<span><i class="pd ${st}"></i>${ST[st].label} <b>${tot[st]}</b></span>`).join('')}</div></div>
+    <div class="rsum">${cols}</div>`;
+}
+
+// raw_data 실행 하나(제품 × 일자). 오늘 = MOCK.rawData.today, 지난 날 = 목업 생성
+function getRawRun(name, i) {
+  const R = MOCK.rawData;
+  const p = R.products.find(x => x.name === name);
+  if (!p) return null;
+  const st = p.history.slice(-R.days)[i];
+  if (!['ok', 'fail', 'run'].includes(st)) return null;
+  const last = R.days - 1;
+  const t = i === last ? (R.today[name] || {}) : {};
+  const P = R.profile;
+  const r = rng(`raw.${name}#${i}`);
+  const date = rawDays()[i];
+  const [hh, mm] = (t.start || '01:00').split(':').map(Number);
+  const start = new Date(date);
+  start.setHours(hh, mm);
+  const durMin = t.durMin != null ? t.durMin : Math.round(st === 'fail' ? lerp(3, 15, r()) : lerp(P.dur[0], P.dur[1], r()));
+  const run = {
+    status: st, dag: `dpm_raw_${name.toLowerCase()}`, date, start, durMin,
+    end: st === 'run' ? null : new Date(start.getTime() + durMin * 60000),
+    next: t.next || '', note: t.note || (st === 'fail' ? 'source table 미도착' : ''),
+  };
+  if (st === 'run') run.pod = t.pod;
+  else {
+    const memPeak = +(P.memReq * lerp(P.mem[0], P.mem[1], r())).toFixed(1);
+    const cpuAvg = +lerp(P.cpu[0], P.cpu[1], r()).toFixed(1);
+    const cpuPeak = Math.min(P.cpuLim, cpuAvg * lerp(1.2, 1.6, r()));
+    run.res = {
+      mem: { use: memPeak, req: P.memReq, lim: P.memLim },
+      thr: cpuPeak >= P.cpuLim * 0.9 ? Math.round(lerp(10, 28, r())) : Math.round(lerp(0, 6, r())),
+    };
+  }
+  return run;
+}
+
+// raw_data 상세: 모듈·step이 없으니 격자 대신 최근 N일 띠 + 실행 정보, 오른쪽은 리소스
+function renderRawDetail() {
+  const { name, w } = selected;
+  const r = getRawRun(name, w);
+  const el = document.getElementById('p2');
+  if (!r) { selected = null; renderWeek(); return; }
+  const finished = r.status !== 'run';
+  const R = MOCK.rawData, last = R.days - 1;
+  const badge = {
+    run:  '<span class="badge run"><span class="dot">●</span>실행중</span>',
+    ok:   '<span class="badge ok">√ 완료</span>',
+    fail: '<span class="badge fail">× 실패</span>',
+  }[r.status];
+  const when = w === last ? '오늘' : `${md(r.date)} (${DOW[r.date.getDay()]})`;
+
+  let h = `<div class="panel-head"><h2>선택 제품 상세</h2><span class="sub">raw_data · ${when} 실행${finished ? ' (종료)' : ''}</span><button class="back" data-back>← 이번 주 요약</button></div>`;
+  h += `<div class="dhead"><span class="pname">${name}</span>${badge}`;
+  h += finished
+    ? `<span class="elapsed">소요 <b>${fmtElapsed(r.durMin)}</b> · ${fmtDT(r.start)} → ${fmtHM(r.end)}</span>`
+    : `<span class="elapsed">경과 <b>${fmtElapsed(r.durMin)}</b> · ${fmtDT(r.start)} 시작</span>`;
+  h += `<span class="dag">${r.dag}</span></div>`;
+
+  // 왼쪽: 최근 N일 띠 (클릭으로 날짜 이동) + 실행 정보
+  const p = R.products.find(x => x.name === name);
+  const days = rawDays();
+  let strip = '';
+  p.history.slice(-R.days).forEach((st, i) => {
+    const run = getRawRun(name, i);
+    strip += `<div class="r7 ${i === w ? 'on' : ''}${run ? ' pick' : ''}" ${run ? `data-rpick="${name}|${i}"` : ''}
+        data-tip="${md(days[i])} (${DOW[days[i].getDay()]}) · ${ST[st].label}">
+      <span class="d">${DOW[days[i].getDay()]}</span><i class="pd ${st}"></i>
+      <span class="v">${run ? fmtShort(run.durMin) : '—'}</span></div>`;
+  });
+  const others = p.history.slice(-R.days).map((st, i) => (st === 'ok' && i !== w ? getRawRun(name, i).durMin : null)).filter(v => v != null);
+  const avg = others.length ? Math.round(mean(others)) : null;
+  const diff = avg && r.status === 'ok' ? Math.round((r.durMin / avg - 1) * 100) : null;
+  const kv = [];
+  if (diff != null) kv.push(['평소 대비', `<span class="wd ${diff > 0 ? 'up' : 'down'}">${diff > 0 ? '+' : ''}${diff}%</span> <span class="muted">평균 ${fmtElapsed(avg)}</span>`]);
+  if (w === last && r.next) kv.push(['다음 예정', r.next]);
+  if (r.note) kv.push(['비고', `<span class="${r.status === 'fail' ? 'nfail' : ''}">${r.note}</span>`]);
+
+  h += `<div class="dbody"><div class="rleft"><div class="sec-title">최근 ${R.days}일 · 소요</div><div class="r7s">${strip}</div>`;
+  if (kv.length) h += `<dl class="kv">${kv.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>`;
+  h += '</div><div>';
+
+  // 오른쪽: 리소스 (pipeline과 같은 형식)
+  if (!finished) {
+    const pod = r.pod;
+    h += `<div class="sec-title">실행 중 Pod 리소스</div>
+      <table class="rtable"><thead><tr><th>메모리</th><th>CPU</th></tr></thead><tbody><tr>
+        <td><div class="rcell">${barHtml(pod.mem, 'GiB', 1)}</div></td>
+        <td><span class="cpuv" data-tip="사용    ${pod.cpu.use.toFixed(1)} c\nrequest ${pod.cpu.req.toFixed(1)} c\nlimit   ${pod.cpu.lim.toFixed(1)} c">${pod.cpu.use.toFixed(1)}c</span></td>
+      </tr></tbody></table>`;
+  } else {
+    h += `<div class="sec-title">리소스 기록</div>
+      <table class="rtable"><thead><tr><th>메모리 피크</th><th>throttle</th></tr></thead><tbody><tr>
+        <td><div class="rcell">${barHtml(r.res.mem, 'GiB', 1)}</div></td>
+        <td><span class="thr ${r.res.thr >= 10 ? 'hot' : ''}">${r.res.thr}%</span></td>
+      </tr></tbody></table>`;
+  }
+  h += `<div class="rnote"><span>막대 범위 0 ~ limit</span><span><i class="req-mark"></i>request</span></div></div></div>`;
   el.innerHTML = h;
 }
 
 function renderDetail() {
   if (!selected) { renderWeek(); return; }
+  if (selected.kind === 'raw') { renderRawDetail(); return; }
   const { name, w } = selected;
   const d = getRun(name, w);
   if (!d) { selected = null; renderWeek(); return; }
@@ -954,7 +1152,9 @@ function renderDetail() {
 // 상세 패널 클릭: 보기 전환 / 셀·목록 강조
 document.getElementById('p2').addEventListener('click', e => {
   const pk = e.target.closest('[data-pick]');
-  if (pk) { selected = { name: pk.dataset.pick, w: MOCK.pipeline.weeks - 1 }; focus = null; renderPipeline(); renderDetail(); return; }
+  const rp = e.target.closest('[data-rpick]');
+  if (rp) { const [n, i] = rp.dataset.rpick.split('|'); selected = { kind: 'raw', name: n, w: +i }; tab = 'raw'; focus = null; renderPipeline(); renderDetail(); return; }
+  if (pk) { selected = { kind: 'pipe', name: pk.dataset.pick, w: MOCK.pipeline.weeks - 1 }; tab = 'pipeline'; focus = null; renderPipeline(); renderDetail(); return; }
   if (e.target.closest('[data-back]')) { selected = null; focus = null; renderPipeline(); renderDetail(); return; }
   const b = e.target.closest('[data-view]');
   if (b) { view = b.dataset.view; renderDetail(); return; }
@@ -969,27 +1169,16 @@ document.getElementById('p2').addEventListener('click', e => {
   if (c) { focus = focus === c.dataset.cell ? null : c.dataset.cell; renderDetail(); }
 });
 
-/* ---------- (3) ---------- */
-function renderRaw() {
-  const rows = MOCK.rawData.rows;
-  const cnt = s => rows.filter(r => r.status === s).length;
-  let h = `<div class="panel-head"><h2>raw_data — 오늘</h2>
-    <span class="sub">${md(NOW)} (${DOW[NOW.getDay()]}) · 전 제품 매일 1회</span>
-    <div class="right rawsum">
-      <span class="st ok">√ <b>${cnt('ok')}</b></span><span class="st run">• <b>${cnt('run')}</b></span>
-      <span class="st fail">× <b>${cnt('fail')}</b></span><span class="st sched">· <b>${cnt('sched')}</b></span>
-      <span class="st none">- <b>${cnt('none')}</b></span>
-    </div></div>`;
-  h += `<table class="rawt"><thead><tr><th>제품</th><th>오늘</th><th>경과/소요</th><th>다음 예정</th><th>비고</th></tr></thead><tbody>`;
-  rows.forEach(r => {
-    const dur = r.dur ? `<span class="k">${r.phase === 'elapsed' ? '경과' : '소요'}</span>${r.dur}` : '<span style="color:var(--text3)">—</span>';
-    h += `<tr class="r-${r.status}"><td class="prod">${r.name}</td>
-      <td class="stc"><span class="st ${r.status}">${ST[r.status].sym}</span><span class="lbl">${ST[r.status].label}</span></td>
-      <td class="dur">${dur}</td><td class="next">${r.next}</td><td class="note">${r.note || ''}</td></tr>`;
-  });
-  h += '</tbody></table>';
-  document.getElementById('p3').innerHTML = h;
-}
+// 발행 현황 탭 전환: 선택은 풀고 오른쪽은 이번 주 요약으로
+document.getElementById('dagtab').addEventListener('click', e => {
+  const b = e.target.closest('[data-tab]');
+  if (!b || b.dataset.tab === tab) return;
+  tab = b.dataset.tab;
+  selected = null;
+  focus = null;
+  renderPipeline();
+  renderDetail();
+});
 
 /* ---------- tooltip ---------- */
 const tip = document.getElementById('tip');
@@ -1007,8 +1196,9 @@ document.getElementById('meta').textContent =
   `기준 ${md(NOW)} (${DOW[NOW.getDay()]}) ${pad(NOW.getHours())}:${pad(NOW.getMinutes())} · 목업 데이터`;
 document.getElementById('legend1').innerHTML = legendHtml();
 renderPipeline();
+// 처음 그린 pipeline 격자 높이로 상자 고정 → raw_data로 바꿔도 크기 유지
+{ const gb = document.getElementById('gridbox'); if (gb.offsetHeight) gb.style.minHeight = gb.offsetHeight + 'px'; }
 renderDetail();
-renderRaw();
 </script>
 </body>
 </html>
