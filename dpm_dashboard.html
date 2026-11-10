@@ -235,8 +235,8 @@
   .rtable td.ms .step { color: var(--text2); }
   .rcell { display: flex; align-items: center; gap: 8px; }
   .bar {
-    position: relative; width: 72px; height: 8px; border-radius: 4px;
-    background: var(--gray-bg); flex: none; cursor: help;
+    position: relative; width: 120px; height: 8px; border-radius: 4px;
+    background: var(--gray-bg); flex: none;
   }
   .bar .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: var(--run-solid); }
   .bar .req { position: absolute; top: -2px; bottom: -2px; width: 1px; margin-left: -0.5px; background: var(--text); border-radius: 1px; }
@@ -246,7 +246,32 @@
   .kpi .v { font: 600 14px/1.3 var(--mono); }
   .kpi .v small { font-size: 11px; font-weight: 400; color: var(--text2); }
   .kpi .v.warn { color: var(--warn); }
-  .cpuv { font: 500 12px var(--mono); cursor: help; }
+  /* 실행 중 Pod: 세로 막대 그래프 (실험) */
+  .vbars { display: flex; flex-wrap: wrap; gap: 16px; }   /* 두 그래프가 안 들어가면 아래로 내려감 */
+  .vbox { border: 1px solid var(--border-soft); border-radius: 6px; padding: 8px 10px 4px; }
+  .vt { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 2px; }
+  .vt span { font: 400 11px var(--mono); color: var(--text3); }
+  .vb .b { fill: var(--run-solid); }
+  .vb .b.cpu { fill: #54aeff; }
+  .vb .rq { stroke: #57606a; stroke-width: 1; opacity: .8; }
+  .vb .lm { stroke: var(--fail); stroke-width: 1.5; stroke-dasharray: 3 2; }
+  .vb .gl { stroke: var(--border-soft); stroke-width: 1; }
+  .vb .ax { font: 10px var(--mono); fill: var(--text3); }
+  .vb .v  { font: 600 11px var(--mono); fill: var(--text); }
+  .vb .xl { font: 500 10px var(--mono); fill: var(--text2); }
+  .vb .xs { font: 10px var(--mono); fill: var(--text3); }
+  .vb .xs .hot, .vb .xs.hot { fill: var(--warn); font-weight: 600; }
+  .vb .ax.m { fill: var(--run); }
+  .vb .ax.c { fill: #3b8fd6; }
+  .lg-b, .lg-c, .lg-rq, .lg-lm { display: inline-block; width: 14px; vertical-align: middle; margin-right: 4px; }
+  .lg-b { height: 8px; background: var(--run-solid); border-radius: 2px; }
+  .lg-c { height: 8px; background: #54aeff; border-radius: 2px; }
+  .lg-rq { height: 0; border-top: 1px solid #57606a; }
+  .lg-lm { height: 0; border-top: 1.5px dashed var(--fail); }
+  .live { margin-left: 8px; font-weight: 500; font-size: 11px; color: var(--run); display: inline-flex; align-items: center; gap: 5px; }
+  .live .pd { width: 7px; height: 7px; }
+  .cpuv { font: 500 12px var(--mono); }
+  .rtable td.el { font: 12px var(--mono); color: var(--text2); }
   .cpuv small { color: var(--text3); font-weight: 400; }
   .rval { font: 500 12px var(--mono); min-width: 52px; }
   .rval small { color: var(--text3); font-weight: 400; }
@@ -318,6 +343,31 @@
   .chip[data-rpick]:hover { border-color: var(--accent); }
   .rs-note { font-size: 11px; color: var(--text3); }
   .rs-note.ok { color: var(--ok); }
+
+  /* raw_data 상세: 시계열 */
+  .tsbox { border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px 2px; margin-bottom: 10px; background: #fff; max-width: 900px; }   /* 넓은 화면에서 오른쪽은 여백으로 */
+  .tsl { display: flex; align-items: baseline; gap: 6px; font-size: 12px; font-weight: 600; color: var(--text2); margin: 0 0 2px; padding-bottom: 6px; border-bottom: 1px solid var(--border-soft); }
+  .tsl span { font: 400 11px var(--mono); color: var(--text3); }
+  .tsl .tst { margin-left: auto; font: 400 12px var(--mono); color: var(--text2); }
+  .tsl .tst b { color: var(--text); font-weight: 600; }
+  .tsl .tst i { font-style: normal; color: var(--text3); margin-left: 12px; }
+  .tsl .tst i.hot { color: var(--warn); font-weight: 600; }
+  .ts { width: 100%; }
+  .tsv .gl { stroke: var(--border-soft); }
+  .tsv .base { stroke: #afb8c1; stroke-width: 1; }
+  .tsv .tk { stroke: var(--border-soft); stroke-dasharray: 2 3; }
+  .tsv .ax { font: 10px var(--mono); fill: var(--text3); }
+  .tsv .lt { font: 10px var(--mono); fill: #57606a; }
+  .tsv .lmt { fill: var(--fail); }
+  .tsv .rq { stroke: #57606a; stroke-width: 1; opacity: .8; }
+  .tsv .lm { stroke: var(--fail); stroke-width: 1.2; stroke-dasharray: 4 3; }
+  .tsv .ar { fill: var(--run-bg); opacity: .8; }
+  .tsv .ln { fill: none; stroke-width: 1.5; stroke-linejoin: round; }
+  .tsv .ln.mem { stroke: var(--run-solid); }
+  .tsv .ln.cpu { stroke: #54aeff; stroke-width: 1.2; }
+  .tsv .pk { fill: #fff; stroke: var(--run); stroke-width: 2; }
+  .tsv .pkt { font: 600 11px var(--mono); fill: var(--run); }
+  .tsv .now { fill: var(--run); animation: pulse 1.6s ease-in-out infinite; }
 
   /* raw_data 상세 */
   .rleft { min-width: 300px; }
@@ -540,17 +590,17 @@ const MOCK = {
       { name: 'PBGH', history: ['ok','ok','ok','ok','ok','ok','none'] },
     ],
     // 지난 실행의 소요·리소스를 만드는 범위 (목업 생성용)
-    profile: { dur: [25, 60], memReq: 16, memLim: 24, mem: [0.40, 0.92], cpuReq: 1.0, cpuLim: 2.0, cpu: [0.5, 1.5] },
+    profile: { dur: [120, 240], longRate: 0.1, longDur: [600, 680], memReq: 16, memLim: 24, mem: [0.40, 0.92], cpuReq: 1.0, cpuLim: 2.0, cpu: [0.5, 1.5] },
     // 오늘 실행 정보. start: 시작(예정) 시각, durMin: 소요 또는 경과(분), pod: 실행 중 리소스
     today: {
-      PBEQ: { start: '01:00', durMin: 38, next: '내일 01:00' },
-      PBEJ: { start: '01:00', durMin: 41, next: '내일 01:00' },
-      PBEK: { start: '06:18', durMin: 72, next: '내일 01:00', note: '평소 대비 +20분',
-              pod: { mem: { use: 12.4, req: 16, lim: 24 }, cpu: { use: 1.1, req: 1.0, lim: 2.0 } } },
+      PBEQ: { start: '01:00', durMin: 178, next: '내일 01:00' },
+      PBEJ: { start: '01:00', durMin: 205, next: '내일 01:00' },
+      PBEK: { start: '01:00', durMin: 390, next: '내일 01:00', note: '평소(약 3시간)보다 길어짐',
+              pod: { mem: { use: 12.4, req: 16, lim: 24 }, cpu: { use: 1.1, req: 1.0, lim: 2.0, throttle: 4 } } },
       PBEM: { start: '01:00', durMin: 7, next: '오늘 09:00 (재시도)', note: 'source table 미도착 · 재시도 1/3' },
-      PBFA: { start: '01:00', durMin: 29, next: '내일 01:00' },
+      PBFA: { start: '01:00', durMin: 152, next: '내일 01:00' },
       PBFC: { start: '08:00', next: '오늘 08:00' },
-      PBGD: { start: '01:00', durMin: 52, next: '내일 01:00' },
+      PBGD: { start: '01:00', durMin: 231, next: '내일 01:00' },
       PBGH: { next: '내일 01:00', note: '원천 시스템 점검으로 오늘 skip' },
     },
   },
@@ -813,12 +863,17 @@ function gridHtml(d, metrics) {
 
 function barHtml(r, unit, decimals) {
   const pct = v => Math.min(100, (v / r.lim) * 100).toFixed(1);
-  const tip = `값      ${r.use.toFixed(decimals)} ${unit}\nrequest ${r.req.toFixed(decimals)} ${unit}\nlimit   ${r.lim.toFixed(decimals)} ${unit}`;
-  return `<div class="bar" data-tip="${tip}">
+  return `<div class="bar">
             <div class="fill" style="width:${pct(r.use)}%"></div>
             <div class="req" style="left:${pct(r.req)}%"></div>
           </div>
-          <span class="rval">${r.use.toFixed(decimals)}<small> ${unit}</small></span>`;
+          <span class="rval">${r.use.toFixed(decimals)}<small> / req ${+r.req.toFixed(decimals)} · lim ${+r.lim.toFixed(decimals)} ${unit}</small></span>`;
+}
+
+// CPU: 사용 / req · lim + throttle
+function cpuHtml(c) {
+  const thr = c.throttle != null ? `<span class="thr ${c.throttle >= 10 ? 'hot' : ''}">thr ${c.throttle}%</span>` : '';
+  return `<div class="rcell"><span class="cpuv">${c.use.toFixed(1)}c <small>/ req ${c.req.toFixed(1)} · lim ${c.lim.toFixed(1)}</small></span>${thr}</div>`;
 }
 
 function failHtml(f) {
@@ -830,7 +885,7 @@ function failHtml(f) {
 // 실행 중: Pod 현재 리소스
 function podsHtml(d) {
   let h = '';  // 실패 박스는 보류: d.failure ? failHtml(d.failure) : ''
-  h += `<div class="sec-title">실행 중 Pod 리소스</div>`;
+  h += `<div class="sec-title">실행 중 Pod 리소스 <span class="live"><i class="pd run"></i>실시간 · ${pad(NOW.getHours())}:${pad(NOW.getMinutes())} 갱신</span></div>`;
   // 합계 (실행 중 Pod 전체)
   const total = (k, f) => d.pods.reduce((a, p) => a + p[k][f], 0);
   const cpuUse = total('cpu', 'use'), cpuReq = total('cpu', 'req');
@@ -840,17 +895,79 @@ function podsHtml(d) {
     <div class="kpi"><div class="k">CPU 사용 / request 합</div>
       <div class="v ${cpuUse > cpuReq ? 'warn' : ''}">${cpuUse.toFixed(1)}c <small>/ ${cpuReq.toFixed(1)}c</small></div></div>
   </div>
-    <table class="rtable"><thead><tr><th>모듈·step</th><th>메모리</th><th>CPU</th></tr></thead><tbody>`;
-  d.pods.forEach(p => {
-    h += `<tr><td class="ms">${p.module}<span class="step">·${p.step}</span></td>
-      <td><div class="rcell">${barHtml(p.mem, 'GiB', 1)}</div></td>
-      <td><span class="cpuv" data-tip="사용    ${p.cpu.use.toFixed(1)} c
-request ${p.cpu.req.toFixed(1)} c
-limit   ${p.cpu.lim.toFixed(1)} c">${p.cpu.use.toFixed(1)}c</span></td></tr>`;
-  });
-  h += `</tbody></table>
-    <div class="rnote"><span>막대 범위 0 ~ limit</span><span><i class="req-mark"></i>request</span></div>`;
+`;
+  // 실험: 모듈·step을 X축으로 한 세로 막대 그래프 (메모리 / CPU)
+  const elapsed = p => {
+    const mod = d.modules.find(m => m.name === p.module);
+    const cell = mod ? mod.cells[MOCK.steps.indexOf(p.step)] : '';
+    return cell && cell.startsWith('R:') ? cell.split(':')[1] : '';
+  };
+  // 메모리 / CPU 그래프 분리 (comboChart는 보류)
+  h += `<div class="vbars">
+    ${vbarChart('메모리', 'GiB', d.pods.map(p => ({ label: `${p.module}·${p.step}`, sub: elapsed(p), ...p.mem })))}
+    ${vbarChart('CPU', 'core', d.pods.map(p => ({ label: `${p.module}·${p.step}`, sub: `thr ${p.cpu.throttle}%`, hot: p.cpu.throttle >= 10, ...p.cpu })))}
+  </div>
+  <div class="rnote"><span><i class="lg-b"></i>실시간 사용량</span><span><i class="lg-rq"></i>request</span><span><i class="lg-lm"></i>limit</span></div>`;
   return h;
+}
+
+// 메모리·CPU 한 그래프 (이중 축): 왼쪽 축 = 메모리 GiB, 오른쪽 축 = CPU core
+function comboChart(items) {
+  const slot = 92, left = 38, right = 38, top = 18, plotH = 130, bottom = 34, bw = 20, gap = 6;
+  const W = left + slot * items.length + right, H = top + plotH + bottom;
+  const mMax = Math.max(...items.map(i => i.mem.lim)) * 1.1;
+  const cMax = Math.max(...items.map(i => i.cpu.lim)) * 1.1;
+  const yM = v => top + plotH * (1 - v / mMax);
+  const yC = v => top + plotH * (1 - v / cMax);
+  let s = `<svg class="vb" viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="xMinYMin meet">`;
+  // 눈금: 같은 높이에 왼쪽(GiB) / 오른쪽(core) 값
+  [0, 0.25, 0.5, 0.75, 1].forEach(t => {
+    const yy = top + plotH * (1 - t);
+    s += `<line class="gl" x1="${left}" x2="${W - right}" y1="${yy}" y2="${yy}"/>`;
+    s += `<text class="ax m" x="${left - 4}" y="${yy + 3}" text-anchor="end">${+(mMax * t).toFixed(0)}</text>`;
+    s += `<text class="ax c" x="${W - right + 4}" y="${yy + 3}">${+(cMax * t).toFixed(1)}</text>`;
+  });
+  s += `<text class="ax m" x="${left - 4}" y="${top - 6}" text-anchor="end">GiB</text>`;
+  s += `<text class="ax c" x="${W - right + 4}" y="${top - 6}">core</text>`;
+  items.forEach((it, i) => {
+    const cx = left + slot * i + slot / 2;
+    [['mem', it.mem, cx - bw / 2 - gap / 2, yM, it.mem.use.toFixed(1)],
+     ['cpu', it.cpu, cx + bw / 2 + gap / 2, yC, it.cpu.use.toFixed(1) + 'c']].forEach(([k, r, bx, y, lab]) => {
+      s += `<rect class="b ${k}" x="${bx - bw / 2}" y="${y(r.use)}" width="${bw}" height="${top + plotH - y(r.use)}" rx="2"/>`;
+      s += `<line class="lm" x1="${bx - bw / 2 - 3}" x2="${bx + bw / 2 + 3}" y1="${y(r.lim)}" y2="${y(r.lim)}"/>`;
+      s += `<line class="rq" x1="${bx - bw / 2 - 3}" x2="${bx + bw / 2 + 3}" y1="${y(r.req)}" y2="${y(r.req)}"/>`;
+      s += `<text class="v" x="${bx}" y="${Math.min(y(r.use), y(r.req)) - 4}" text-anchor="middle">${lab}</text>`;
+    });
+    s += `<text class="xl" x="${cx}" y="${top + plotH + 14}" text-anchor="middle">${it.label}</text>`;
+    s += `<text class="xs" x="${cx}" y="${top + plotH + 27}" text-anchor="middle">${it.el}${it.el ? ' · ' : ''}<tspan class="${it.thr >= 10 ? 'hot' : ''}">thr ${it.thr}%</tspan></text>`;
+  });
+  return s + '</svg>';
+}
+
+// 세로 막대 그래프: 막대 = 사용량, 짧은 실선 = request, 짧은 점선 = limit
+function vbarChart(title, unit, items) {
+  const slot = 68, left = 30, top = 12, plotH = 120, bottom = 46;
+  const W = left + slot * items.length, H = top + plotH + bottom;
+  const max = Math.max(...items.map(i => i.lim)) * 1.08;
+  const y = v => top + plotH * (1 - v / max);
+  const nice = max >= 10 ? Math.round(max / 2 / 8) * 8 : +(max / 2).toFixed(1);
+  // 원래 크기 그대로 그림 (칸에 맞춰 줄이면 글자도 작아짐)
+  let s = `<svg class="vb" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`;
+  [0, nice, nice * 2].filter(v => v <= max).forEach(v => {
+    s += `<line class="gl" x1="${left}" x2="${W}" y1="${y(v)}" y2="${y(v)}"/><text class="ax" x="${left - 4}" y="${y(v) + 3}" text-anchor="end">${v}</text>`;
+  });
+  items.forEach((it, i) => {
+    const cx = left + slot * i + slot / 2, bw = 22, tw = 34;
+    s += `<rect class="b" x="${cx - bw / 2}" y="${y(it.use)}" width="${bw}" height="${top + plotH - y(it.use)}" rx="2"/>`;
+    s += `<line class="lm" x1="${cx - tw / 2}" x2="${cx + tw / 2}" y1="${y(it.lim)}" y2="${y(it.lim)}"/>`;
+    s += `<line class="rq" x1="${cx - tw / 2}" x2="${cx + tw / 2}" y1="${y(it.req)}" y2="${y(it.req)}"/>`;
+    // 값은 X축 바로 아래 고정 줄 → 모든 막대의 숫자가 한 줄로 정렬
+    s += `<text class="v" x="${cx}" y="${top + plotH + 14}" text-anchor="middle">${it.use.toFixed(1)}</text>`;
+    s += `<text class="xl" x="${cx}" y="${top + plotH + 27}" text-anchor="middle">${it.label}</text>`;
+    if (it.sub) s += `<text class="xs${it.hot ? ' hot' : ''}" x="${cx}" y="${top + plotH + 40}" text-anchor="middle">${it.sub}</text>`;
+  });
+  s += '</svg>';
+  return `<div class="vbox"><div class="vt">${title} <span>${unit}</span></div>${s}</div>`;
 }
 
 // 종료: 실행 요약 — 현재 미사용(보류). 평소 대비 소요 + request 조정이 필요한 셀
@@ -1009,6 +1126,95 @@ function rawWeekHtml(mon, todayIdx) {
     <div class="rsum">${cols}</div>`;
 }
 
+// ---- raw_data 시계열 (목업 생성 + 그리기) ----
+const TS = {};   // 그래프 id → 데이터. innerHTML을 넣은 뒤 drawTs()가 칸 폭에 맞춰 그림
+
+// 실행 하나의 메모리·CPU 시계열. 약 300개 점 (실제 조회 시 간격 = 실행 시간 ÷ 300)
+function rawSeries(run, seed) {
+  const r = rng('ts.' + seed);
+  const t0 = run.start.getTime();
+  const t1 = run.end ? run.end.getTime() : NOW.getTime();
+  const n = 300;
+  const t = [], mem = [], cpu = [];
+  const bumps = Array.from({ length: 4 }, () => ({ at: r(), w: lerp(0.03, 0.08, r()), h: lerp(0.08, 0.22, r()) }));
+  let c = 0.5;
+  for (let i = 0; i < n; i++) {
+    const x = i / (n - 1);
+    t.push(t0 + (t1 - t0) * x);
+    let m = (1 - Math.exp(-7 * x)) * (0.72 + 0.12 * Math.sin(x * 9 + r() * 0.2));
+    bumps.forEach(b => { m += b.h * Math.exp(-(((x - b.at) / b.w) ** 2)); });
+    mem.push(Math.max(0.02, m + (r() - 0.5) * 0.025));
+    c = c * 0.85 + r() * 0.15 * 2;   // 출렁이는 CPU
+    cpu.push(c);
+  }
+  // 크기 맞춤: 종료 = 피크 기준, 실행중 = 마지막 값이 현재값이 되도록
+  const memRef = run.pod ? run.pod.mem : run.res.mem;
+  const cpuRef = run.pod ? run.pod.cpu : run.res.cpu;
+  const mk = run.pod ? memRef.use / mem[n - 1] : memRef.use / Math.max(...mem);
+  const memS = mem.map(v => +(v * mk).toFixed(2));
+  const cAvg = cpu.reduce((a, b) => a + b, 0) / n;
+  const ck = run.pod ? cpuRef.use / cpu[n - 1] : cpuRef.avg / cAvg;
+  const cpuS = cpu.map(v => +Math.min(cpuRef.lim, v * ck).toFixed(2));
+  return { t, mem: memS, cpu: cpuS };
+}
+
+function tsHtml(id, data) {
+  TS[id] = data;
+  return `<div class="ts" id="${id}" style="height:${data.height}px"></div>`;
+}
+
+// 칸 폭에 맞춰 그림 (글자는 실제 크기 유지)
+function drawTs() {
+  Object.keys(TS).forEach(id => {
+    const el = document.getElementById(id);
+    if (!el || !el.clientWidth) return;
+    const d = TS[id];
+    const W = el.clientWidth, H = d.height;
+    const L = 34, R = 64, T = 10, B = d.xAxis ? 20 : 6;
+    const t0 = d.t[0], t1 = d.t[d.t.length - 1];
+    const ymax = d.lim * 1.08;
+    const x = v => L + (W - L - R) * (v - t0) / (t1 - t0 || 1);
+    const y = v => T + (H - T - B) * (1 - v / ymax);
+    let s = `<svg width="${W}" height="${H}" class="tsv">`;
+    // 가로 눈금
+    // y 눈금 3~4단계 (보기 좋은 간격 중 ymax/4 이상인 가장 작은 값)
+    const step = [0.25, 0.5, 1, 2, 4, 5, 8, 10, 16, 20, 25, 50].find(v => v >= ymax / 4) || ymax / 4;
+    for (let v = step; v < ymax; v += step) {
+      s += `<line class="gl" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="ax" x="${L - 4}" y="${y(v) + 3}" text-anchor="end">${+v.toFixed(2)}</text>`;
+    }
+    // 0 위치 바닥선은 조금 진하게 (x축 역할)
+    s += `<line class="base" x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}"/><text class="ax" x="${L - 4}" y="${y(0) + 3}" text-anchor="end">0</text>`;
+    // 시간 눈금: 실행 길이에 맞춰 30분 / 1시간 / 2시간
+    if (d.xAxis) {
+      const hrs = (t1 - t0) / 3600000;
+      const iv = (hrs <= 4 ? 30 : hrs <= 8 ? 60 : 120) * 60000;
+      for (let tk = Math.ceil(t0 / iv) * iv; tk <= t1; tk += iv) {
+        const dt = new Date(tk);
+        s += `<line class="tk" x1="${x(tk)}" x2="${x(tk)}" y1="${T}" y2="${H - B}"/>`;
+        s += `<text class="ax" x="${x(tk)}" y="${H - 5}" text-anchor="middle">${pad(dt.getHours())}:${pad(dt.getMinutes())}</text>`;
+      }
+    }
+    // request / limit
+    s += `<line class="lm" x1="${L}" x2="${W - R}" y1="${y(d.lim)}" y2="${y(d.lim)}"/><text class="lt lmt" x="${W - R + 4}" y="${y(d.lim) + 3}">lim ${d.lim}</text>`;
+    s += `<line class="rq" x1="${L}" x2="${W - R}" y1="${y(d.req)}" y2="${y(d.req)}"/><text class="lt" x="${W - R + 4}" y="${y(d.req) + 3}">req ${d.req}</text>`;
+    // 선 (+ 메모리는 면)
+    const pts = d.v.map((v, i) => `${x(d.t[i]).toFixed(1)},${y(v).toFixed(1)}`);
+    if (d.area) s += `<path class="ar" d="M${x(t0)},${y(0)} L${pts.join(' L')} L${x(t1)},${y(0)} Z"/>`;
+    s += `<path class="ln ${d.cls}" d="M${pts.join(' L')}"/>`;
+    // 피크 점
+    if (d.peak) {
+      const pi = d.v.indexOf(Math.max(...d.v));
+      const px = x(d.t[pi]), py = y(d.v[pi]);
+      const pt = new Date(d.t[pi]);
+      s += `<circle class="pk" cx="${px}" cy="${py}" r="3.5"/><text class="pkt" x="${px}" y="${py - 7}" text-anchor="middle">피크 ${d.v[pi].toFixed(1)} (${pad(pt.getHours())}:${pad(pt.getMinutes())})</text>`;
+    }
+    // 실행중: 지금
+    if (d.live) s += `<circle class="now" cx="${x(t1)}" cy="${y(d.v[d.v.length - 1])}" r="4"/>`;
+    el.innerHTML = s + '</svg>';
+  });
+}
+window.addEventListener('resize', drawTs);
+
 // raw_data 실행 하나(제품 × 일자). 오늘 = MOCK.rawData.today, 지난 날 = 목업 생성
 function getRawRun(name, i) {
   const R = MOCK.rawData;
@@ -1024,7 +1230,7 @@ function getRawRun(name, i) {
   const [hh, mm] = (t.start || '01:00').split(':').map(Number);
   const start = new Date(date);
   start.setHours(hh, mm);
-  const durMin = t.durMin != null ? t.durMin : Math.round(st === 'fail' ? lerp(3, 15, r()) : lerp(P.dur[0], P.dur[1], r()));
+  const durMin = t.durMin != null ? t.durMin : Math.round(st === 'fail' ? lerp(3, 15, r()) : r() < P.longRate ? lerp(P.longDur[0], P.longDur[1], r()) : lerp(P.dur[0], P.dur[1], r()));
   const run = {
     status: st, dag: `dpm_raw_${name.toLowerCase()}`, date, start, durMin,
     end: st === 'run' ? null : new Date(start.getTime() + durMin * 60000),
@@ -1037,6 +1243,7 @@ function getRawRun(name, i) {
     const cpuPeak = Math.min(P.cpuLim, cpuAvg * lerp(1.2, 1.6, r()));
     run.res = {
       mem: { use: memPeak, req: P.memReq, lim: P.memLim },
+      cpu: { avg: cpuAvg, req: P.cpuReq, lim: P.cpuLim },
       thr: cpuPeak >= P.cpuLim * 0.9 ? Math.round(lerp(10, 28, r())) : Math.round(lerp(0, 6, r())),
     };
   }
@@ -1088,23 +1295,29 @@ function renderRawDetail() {
   if (kv.length) h += `<dl class="kv">${kv.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>`;
   h += '</div><div>';
 
-  // 오른쪽: 리소스 (pipeline과 같은 형식)
-  if (!finished) {
-    const pod = r.pod;
-    h += `<div class="sec-title">실행 중 Pod 리소스</div>
-      <table class="rtable"><thead><tr><th>메모리</th><th>CPU</th></tr></thead><tbody><tr>
-        <td><div class="rcell">${barHtml(pod.mem, 'GiB', 1)}</div></td>
-        <td><span class="cpuv" data-tip="사용    ${pod.cpu.use.toFixed(1)} c\nrequest ${pod.cpu.req.toFixed(1)} c\nlimit   ${pod.cpu.lim.toFixed(1)} c">${pod.cpu.use.toFixed(1)}c</span></td>
-      </tr></tbody></table>`;
-  } else {
-    h += `<div class="sec-title">리소스 기록</div>
-      <table class="rtable"><thead><tr><th>메모리 피크</th><th>throttle</th></tr></thead><tbody><tr>
-        <td><div class="rcell">${barHtml(r.res.mem, 'GiB', 1)}</div></td>
-        <td><span class="thr ${r.res.thr >= 10 ? 'hot' : ''}">${r.res.thr}%</span></td>
-      </tr></tbody></table>`;
-  }
-  h += `<div class="rnote"><span>막대 범위 0 ~ limit</span><span><i class="req-mark"></i>request</span></div></div></div>`;
+  // 오른쪽: 메모리·CPU 시계열 (실행중 = 시작~지금, 종료 = 전체 구간)
+  const sr = rawSeries(r, `${name}#${w}`);
+  const memRef = r.pod ? r.pod.mem : r.res.mem;
+  const cpuRef = r.pod ? r.pod.cpu : r.res.cpu;
+  const thr = r.pod ? r.pod.cpu.throttle : r.res.thr;
+  const mPeak = Math.max(...sr.mem);
+  const cAvg = sr.cpu.reduce((a, b) => a + b, 0) / sr.cpu.length;
+  const memTxt = finished
+    ? `피크 <b>${mPeak.toFixed(1)}</b>`
+    : `현재 <b>${memRef.use.toFixed(1)}</b><i>피크 ${mPeak.toFixed(1)}</i>`;
+  const cpuTxt = finished
+    ? `평균 <b>${cAvg.toFixed(1)}</b>`
+    : `현재 <b>${cpuRef.use.toFixed(1)}</b><i>평균 ${cAvg.toFixed(1)}</i>`;
+  h += `<div class="sec-title">리소스 ${finished ? '기록' : `<span class="live"><i class="pd run"></i>실시간 · ${pad(NOW.getHours())}:${pad(NOW.getMinutes())} 갱신</span>`}</div>`;
+  Object.keys(TS).forEach(k => delete TS[k]);
+  // 숫자는 각 그래프 제목 줄 오른쪽에
+  h += `<div class="tsbox"><div class="tsl">메모리 <span>GiB</span><span class="tst">${memTxt}<i>req ${memRef.req}</i><i>lim ${memRef.lim}</i></span></div>`;
+  h += tsHtml('ts-mem', { t: sr.t, v: sr.mem, req: memRef.req, lim: memRef.lim, height: 170, area: true, peak: true, live: !finished, cls: 'mem', xAxis: true }) + '</div>';
+  h += `<div class="tsbox"><div class="tsl">CPU <span>core</span><span class="tst">${cpuTxt}<i>req ${cpuRef.req.toFixed(1)}</i><i>lim ${cpuRef.lim.toFixed(1)}</i><i class="${thr >= 10 ? 'hot' : ''}">thr ${thr}%</i></span></div>`;
+  h += tsHtml('ts-cpu', { t: sr.t, v: sr.cpu, req: cpuRef.req, lim: cpuRef.lim, height: 110, live: !finished, cls: 'cpu', xAxis: true }) + '</div>';
+  h += `<div class="rnote"><span><i class="lg-b"></i>사용량</span><span><i class="lg-rq"></i>request</span><span><i class="lg-lm"></i>limit</span>${finished ? '' : '<span>● 지금</span>'}</div></div></div>`;
   el.innerHTML = h;
+  drawTs();
 }
 
 function renderDetail() {
