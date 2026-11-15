@@ -41,7 +41,8 @@
     padding: 0 24px; height: 48px;
     background: var(--panel); border-bottom: 1px solid var(--border);
   }
-  .topbar .brand { font-weight: 700; font-size: 15px; letter-spacing: -0.2px; }
+  .topbar .brand { font-weight: 700; font-size: 15px; letter-spacing: -0.2px; white-space: nowrap; }
+  .topbar .brand span { font-weight: 500; color: var(--text2); }
   .tabs { display: flex; gap: 4px; height: 100%; }
   .tab {
     display: flex; align-items: center; padding: 0 12px;
@@ -331,7 +332,10 @@
   .rs-col.today .cal-h { background: var(--run-bg); color: var(--run); }
   .rs-col.today .cal-h span { color: var(--run); }
   .rs-dots { display: flex; flex-wrap: wrap; gap: 4px; }
-  .rs-dots .pd { width: 9px; height: 9px; }
+  .rs-items { display: flex; flex-direction: column; gap: 2px; }
+  .rs-it { display: flex; align-items: center; gap: 4px; font: 10px var(--mono); color: var(--text2); white-space: nowrap; }
+  .rs-it b { font-weight: 600; color: var(--text); }
+  .rs-dots .pd, .rs-it .pd { width: 9px; height: 9px; flex: none; }
   .rs-dots .pd.sel { box-shadow: 0 0 0 1.5px #fff, 0 0 0 3px var(--text); }
   .chip { font-size: 11px; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border); background: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .chip b { font-weight: 600; }
@@ -360,6 +364,7 @@
   .tsv .lt { font: 10px var(--mono); fill: #57606a; }
   .tsv .lmt { fill: var(--fail); }
   .tsv .rq { stroke: #57606a; stroke-width: 1; opacity: .8; }
+  .tsv .rqv { fill: none; stroke: #57606a; stroke-width: 1; opacity: .8; }
   .tsv .lm { stroke: var(--fail); stroke-width: 1.2; stroke-dasharray: 4 3; }
   .tsv .ar { fill: var(--run-bg); opacity: .8; }
   .tsv .ln { fill: none; stroke-width: 1.5; stroke-linejoin: round; }
@@ -382,6 +387,12 @@
   .kv dt { color: var(--text3); }
   .kv dd { margin: 0; color: var(--text); }
   .kv .nfail { color: var(--fail); }
+  .sumkv { grid-template-columns: 110px 1fr; gap: 8px 14px; font-size: 13px; }
+  .kvlink { border: 0; background: none; padding: 0; font: inherit; color: var(--text); cursor: pointer; text-align: left; }
+  .kvlink .val { font: 600 13px var(--mono); color: var(--text); }
+  .kvlink .who { font: 11px var(--mono); color: var(--text3); margin-left: 8px; }
+  .kvlink .arr { color: var(--text3); margin-left: 4px; }
+  .kvlink:hover .who, .kvlink:hover .arr { color: var(--accent); }
 
   /* scheduled state */
   .sched-box {
@@ -397,6 +408,47 @@
     color: var(--text2); font-size: 12px;
   }
 
+  /* 실패·재시도 */
+  table.itable { width: 100%; border-collapse: collapse; }
+  .itable th { text-align: left; font-weight: 500; font-size: 11px; color: var(--text3); padding: 0 10px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .itable td { padding: 8px 10px; border-bottom: 1px solid var(--border-soft); font-size: 12px; white-space: nowrap; }
+  .itable tr:last-child td { border-bottom: none; }
+  .itable td.mono { font-family: var(--mono); color: var(--text2); }
+  .itable td.dag { color: var(--text3); font-size: 11px; }
+  .itable td.pn { font-weight: 600; }
+  .itable td.why { white-space: normal; color: var(--text); }
+  .itable td.nx { color: var(--text2); }
+  .itable td.nx.act { color: var(--fail); font-weight: 600; }
+  .itable td.tg { text-align: right; color: var(--text3); width: 20px; }
+  .itable tr.row { cursor: pointer; }
+  .itable tr.row:hover td { background: #f6f8fa; }
+  /* 펼친 행: 연한 회색 (누르면 접힘) / 펼쳐진 영역: 흰 상자로 구분 */
+  .itable tr.row.open td { background: #f0f2f5; border-bottom-color: transparent; }
+  .itable tr.row.open:hover td { background: #f0f2f5; }   /* 펼친 행은 hover해도 그대로 */
+  .itable tr.row.open td.tg { color: var(--text); }
+  .itable tr.exp td { padding: 8px 10px 14px 24px; background: #fff; white-space: normal; border-bottom: 1px solid var(--border); }
+  .expbox { display: grid; grid-template-columns: 340px 1fr; gap: 14px; padding: 10px; border: 1px solid var(--border-soft); border-radius: 6px; background: #fafbfc; }
+  .tries { display: flex; flex-direction: column; gap: 2px; }
+  .try { display: grid; grid-template-columns: 30px 82px 1fr; gap: 6px; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 12px; border: 1px solid transparent; }
+  .try:hover { background: #fff; }
+  .try.on { background: #fff; border-color: #8c959f; }
+  .try .n { color: var(--text2); font-weight: 600; }
+  .try .t { font-family: var(--mono); color: var(--text2); }
+  .tr-fail { color: var(--fail); white-space: nowrap; }
+  .tr-ok { color: var(--ok); font-weight: 600; }
+  .tr-run { color: var(--run); font-weight: 600; }
+  .logbox { min-width: 0; }
+  .loghead { display: flex; align-items: baseline; gap: 8px; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 4px; }
+  .loghead span { font-weight: 400; color: var(--text3); font-size: 11px; }
+  .loghead a { margin-left: auto; font-weight: 400; font-size: 11px; color: var(--accent); text-decoration: none; }
+  .log { margin: 0; padding: 10px 12px; background: #1f2328; color: #d1d9e0; border-radius: 6px; font: 11px/1.55 var(--mono); max-height: 220px; overflow: auto; white-space: pre; }
+  .itable tr.ok td { color: var(--text3); }
+  .itable tr.ok td.pn, .itable tr.ok td.why { color: var(--text3); font-weight: 400; }
+  .ib { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 10px; }
+  .ib.fail { background: var(--fail-bg); color: var(--fail); }
+  .ib.retry { background: var(--run-bg); color: var(--run); }
+  .ib.ok { background: var(--gray-bg); color: var(--text2); font-weight: 500; }
+
   /* ---------- tooltip ---------- */
   #tip {
     position: fixed; z-index: 100; pointer-events: none; display: none;
@@ -411,7 +463,7 @@
 <div class="content">
 
 <header class="topbar">
-  <div class="brand">DPM</div>
+  <div class="brand">DPM Auto Finder <span>Dashboard</span></div>
   <div class="meta" id="meta"></div>
 </header>
 
@@ -433,6 +485,9 @@
 
   <!-- (2) 선택 제품 상세 -->
   <section class="panel" id="p2"></section>
+
+  <!-- (3) 실패·재시도 -->
+  <section class="panel full" id="p3"></section>
 </main>
 
 </div>
@@ -566,6 +621,32 @@ const MOCK = {
     PBGH: { durMin: 288, avgMin: 285 },
   },
 
+  // 실패·재시도 (최근 7일). 실행 안의 task 하나(raw는 실행 하나)당 한 줄, 상태·시도는 현재 기준
+  // state: fail | retry(재시도 진행중) | ok(재시도 후 성공), final: 재시도 소진
+  // tries: 시도별 [시각, 결과] — 결과가 'run'이면 실행중, 'ok'면 성공, 나머지는 실패 원인
+  issues: [
+    { state: 'fail', final: true,  dag: 'pipeline', name: 'PBEM', task: 'M04·rank', date: '2026-11-02', tryMax: 3, next: '수동 조치 필요',
+      tries: [['03:58', 'OOMKilled'], ['04:49', 'OOMKilled'], ['05:40', 'OOMKilled']] },
+    { state: 'fail', final: true,  dag: 'pipeline', name: 'PBEQ', task: 'M08·stat', date: '2026-11-04', tryMax: 3, next: '수동 조치 필요',
+      tries: [['02:40', 'exit 137'], ['03:25', 'OOMKilled (46.9 / 48 GiB)'], ['04:12', 'OOMKilled (47.8 / 48 GiB)']] },
+    { state: 'fail', final: false, dag: 'raw', name: 'PBEM', date: '2026-11-04', tryMax: 3, next: '09:00 재시도 예정',
+      tries: [['02:17', 'source table 미도착']] },
+    { state: 'retry',              dag: 'pipeline', name: 'PBEJ', task: 'M02·gain', date: '2026-11-04', tryMax: 3, next: '2차 시도 실행중',
+      tries: [['06:50', 'exit 137'], ['06:55', 'run']] },
+    { state: 'fail', final: true,  dag: 'raw', name: 'PBEM', date: '2026-11-03', tryMax: 3, next: '재시도 소진',
+      tries: [['02:13', 'source table 미도착'], ['02:19', 'source table 미도착'], ['02:25', 'source table 미도착']] },
+    { state: 'fail', final: true,  dag: 'raw', name: 'PBGD', date: '2026-11-01', tryMax: 3, next: '재시도 소진',
+      tries: [['04:30', "KeyError: 'lot_id'"], ['04:44', "KeyError: 'lot_id'"], ['04:58', "KeyError: 'lot_id'"]] },
+    { state: 'fail', final: true,  dag: 'raw', name: 'PBEJ', date: '2026-10-31', tryMax: 3, next: '재시도 소진',
+      tries: [['01:12', 'DB connection timeout'], ['01:27', 'DB connection timeout'], ['01:42', 'DB connection timeout']] },
+    { state: 'ok',                 dag: 'pipeline', name: 'PBEK', task: 'M05·gain', date: '2026-11-02', tryMax: 3, next: '2차 시도 성공',
+      tries: [['04:31', 'exit 137'], ['04:36', 'ok']] },
+    { state: 'ok',                 dag: 'raw', name: 'PBFA', date: '2026-11-03', tryMax: 3, next: '2차 시도 성공',
+      tries: [['03:20', 'DB connection timeout'], ['03:25', 'ok']] },
+    { state: 'ok',                 dag: 'raw', name: 'PBGH', date: '2026-10-30', tryMax: 3, next: '3차 시도 성공',
+      tries: [['05:44', 'source table 미도착'], ['05:58', 'source table 미도착'], ['06:12', 'ok']] },
+  ],
+
   // pipeline 제품별 주간 실행 요일·시각 (달력 배치용)
   schedule: {
     PBEK: '월 02:00', PBEM: '월 03:00',
@@ -592,16 +673,18 @@ const MOCK = {
     // 지난 실행의 소요·리소스를 만드는 범위 (목업 생성용)
     profile: { dur: [120, 240], longRate: 0.1, longDur: [600, 680], memReq: 16, memLim: 24, mem: [0.40, 0.92], cpuReq: 1.0, cpuLim: 2.0, cpu: [0.5, 1.5] },
     // 오늘 실행 정보. start: 시작(예정) 시각, durMin: 소요 또는 경과(분), pod: 실행 중 리소스
+    // 제품별 매일 시작 시각
+    time: { PBEQ: '00:30', PBEJ: '01:00', PBEK: '01:30', PBEM: '02:10', PBFA: '03:00', PBGD: '04:20', PBGH: '05:40', PBFC: '08:00' },
     today: {
-      PBEQ: { start: '01:00', durMin: 178, next: '내일 01:00' },
-      PBEJ: { start: '01:00', durMin: 205, next: '내일 01:00' },
-      PBEK: { start: '01:00', durMin: 390, next: '내일 01:00', note: '평소(약 3시간)보다 길어짐',
+      PBEQ: { durMin: 178, next: '내일 00:30' },
+      PBEJ: { durMin: 205, next: '내일 01:00' },
+      PBEK: { durMin: 360, next: '내일 01:30', note: '평소(약 3시간)보다 길어짐',
               pod: { mem: { use: 12.4, req: 16, lim: 24 }, cpu: { use: 1.1, req: 1.0, lim: 2.0, throttle: 4 } } },
-      PBEM: { start: '01:00', durMin: 7, next: '오늘 09:00 (재시도)', note: 'source table 미도착 · 재시도 1/3' },
-      PBFA: { start: '01:00', durMin: 152, next: '내일 01:00' },
-      PBFC: { start: '08:00', next: '오늘 08:00' },
-      PBGD: { start: '01:00', durMin: 231, next: '내일 01:00' },
-      PBGH: { next: '내일 01:00', note: '원천 시스템 점검으로 오늘 skip' },
+      PBEM: { durMin: 7, next: '오늘 09:00 (재시도)', note: 'source table 미도착 · 재시도 1/3' },
+      PBFA: { durMin: 152, next: '내일 03:00' },
+      PBFC: { next: '오늘 08:00' },
+      PBGD: { durMin: 151, next: '내일 04:20' },
+      PBGH: { next: '내일 05:40', note: '원천 시스템 점검으로 오늘 skip' },
     },
   },
 };
@@ -1114,11 +1197,19 @@ function rawWeekHtml(mon, todayIdx) {
     const rows = R.products.map(p => ({ name: p.name, st: hi >= 0 ? p.history.slice(-R.days)[hi] : 'sched' }));
     if (hi >= 0) rows.forEach(r => { if (r.st in tot) tot[r.st]++; });   // 앞으로의 날은 세지 않음
     // 점만 표시 (클릭 이동 없음, 툴팁만)
-    const dots = rows.map(r =>
-      `<i class="pd ${r.st}" data-tip="${r.name} · ${md(dt)} (${dn})\n${ST[r.st].label}"></i>`).join('');
+    const dot = r => `<i class="pd ${r.st}" data-tip="${r.name} · ${md(dt)} (${dn})\n${ST[r.st].label}"></i>`;
+    let body;
+    if (i === todayIdx) {
+      // 오늘만: 한 줄에 하나씩 (점 · 제품 · 시작 시각), 시각 순서
+      const tm = r => (R.today[r.name] || {}).start || R.time[r.name] || '—';
+      body = `<div class="rs-items">${[...rows].sort((x, y) => tm(x).localeCompare(tm(y)))
+        .map(r => `<span class="rs-it">${dot(r)}<b>${r.name}</b>${tm(r)}</span>`).join('')}</div>`;
+    } else {
+      body = `<div class="rs-dots">${rows.map(dot).join('')}</div>`;
+    }
     cols += `<div class="rs-col ${i === todayIdx ? 'today' : ''}">
       <div class="cal-h">${dn} <span>${md(dt)}</span></div>
-      <div class="rs-dots">${dots}</div></div>`;
+      ${body}</div>`;
   });
   return `<div class="wsec second"><b>raw_data</b><span class="sub">매일 · 전 제품</span>
       <div class="wsum">${['ok', 'fail', 'run', 'sched'].map(st =>
@@ -1172,7 +1263,7 @@ function drawTs() {
     const W = el.clientWidth, H = d.height;
     const L = 34, R = 64, T = 10, B = d.xAxis ? 20 : 6;
     const t0 = d.t[0], t1 = d.t[d.t.length - 1];
-    const ymax = d.lim * 1.08;
+    const ymax = d.lim != null ? d.lim * 1.08 : Math.max(...d.v, ...(d.reqV || [0])) * 1.12;
     const x = v => L + (W - L - R) * (v - t0) / (t1 - t0 || 1);
     const y = v => T + (H - T - B) * (1 - v / ymax);
     let s = `<svg width="${W}" height="${H}" class="tsv">`;
@@ -1194,9 +1285,14 @@ function drawTs() {
         s += `<text class="ax" x="${x(tk)}" y="${H - 5}" text-anchor="middle">${pad(dt.getHours())}:${pad(dt.getMinutes())}</text>`;
       }
     }
-    // request / limit
-    s += `<line class="lm" x1="${L}" x2="${W - R}" y1="${y(d.lim)}" y2="${y(d.lim)}"/><text class="lt lmt" x="${W - R + 4}" y="${y(d.lim) + 3}">lim ${d.lim}</text>`;
-    s += `<line class="rq" x1="${L}" x2="${W - R}" y1="${y(d.req)}" y2="${y(d.req)}"/><text class="lt" x="${W - R + 4}" y="${y(d.req) + 3}">req ${d.req}</text>`;
+    // request / limit (고정값이면 가로선, reqV가 있으면 시간에 따라 바뀌는 계단선)
+    if (d.lim != null) s += `<line class="lm" x1="${L}" x2="${W - R}" y1="${y(d.lim)}" y2="${y(d.lim)}"/><text class="lt lmt" x="${W - R + 4}" y="${y(d.lim) + 3}">lim ${d.lim}</text>`;
+    if (d.req != null) s += `<line class="rq" x1="${L}" x2="${W - R}" y1="${y(d.req)}" y2="${y(d.req)}"/><text class="lt" x="${W - R + 4}" y="${y(d.req) + 3}">req ${d.req}</text>`;
+    if (d.reqV) {
+      const rp = d.reqV.map((v, i) => `${x(d.t[i]).toFixed(1)},${y(v).toFixed(1)}`);
+      const rmax = Math.max(...d.reqV);
+      s += `<path class="rqv" d="M${rp.join(' L')}"/><text class="lt" x="${W - R + 4}" y="${y(rmax) + 3}">req 합</text>`;
+    }
     // 선 (+ 메모리는 면)
     const pts = d.v.map((v, i) => `${x(d.t[i]).toFixed(1)},${y(v).toFixed(1)}`);
     if (d.area) s += `<path class="ar" d="M${x(t0)},${y(0)} L${pts.join(' L')} L${x(t1)},${y(0)} Z"/>`;
@@ -1215,6 +1311,88 @@ function drawTs() {
 }
 window.addEventListener('resize', drawTs);
 
+// ---- pipeline 완료 실행: 메모리·CPU 시계열 ----
+// 각 모듈·step이 언제 돌았는지 (목업): 동시 실행 상한만큼 모듈이 먼저 돌고, 끝난 자리에 다음 모듈이 들어감
+function pipeCellTimes(d, metrics) {
+  const slots = MOCK.maxConcurrent;
+  const modDur = d.modules.map((m, mi) => m.cells.reduce((a, c, si) => a + (metrics[mi][si] ? metrics[mi][si].dur : 0), 0));
+  const modStart = [], modEnd = [];
+  d.modules.forEach((m, mi) => { modStart[mi] = mi < slots ? 0 : modEnd[mi - slots]; modEnd[mi] = modStart[mi] + modDur[mi]; });
+  const t0 = new Date(d.summary.start).getTime(), t1 = new Date(d.summary.end).getTime();
+  const k = (t1 - t0) / (Math.max(...modEnd) || 1);   // 실제 실행 시간에 맞춰 늘이고 줄임
+  const out = [];
+  d.modules.forEach((m, mi) => {
+    let c = modStart[mi];
+    m.cells.forEach((code, si) => {
+      const met = metrics[mi][si];
+      if (!met) return;
+      out.push({ key: `${m.name}.${MOCK.steps[si]}`, label: `${m.name}·${MOCK.steps[si]}`, m: met,
+                 start: new Date(t0 + c * k), end: new Date(t0 + (c + met.dur) * k) });
+      c += met.dur;
+    });
+  });
+  return out;
+}
+
+function pipeSeriesHtml(name, d, metrics) {
+  Object.keys(TS).forEach(k => delete TS[k]);
+  const cells = pipeCellTimes(d, metrics);
+  const seed = d.seed || name;
+  const asRun = c => ({ start: c.start, end: c.end,
+    res: { mem: { use: c.m.memPeak, req: c.m.memReq, lim: c.m.memLim }, cpu: { avg: c.m.cpuAvg, req: c.m.cpuReq, lim: c.m.cpuLim } } });
+  const fmtT = t => `${pad(new Date(t).getHours())}:${pad(new Date(t).getMinutes())}`;
+  const sel = focus && cells.find(c => c.key === focus);
+  let h = '';
+
+  if (sel) {
+    // 격자에서 고른 모듈·step 하나
+    const sr = rawSeries(asRun(sel), `${seed}.${sel.key}`);
+    const mPeak = Math.max(...sr.mem), cAvg = sr.cpu.reduce((a, b) => a + b, 0) / sr.cpu.length;
+    h += `<div class="sec-title" style="display:flex;align-items:baseline;gap:4px">리소스 기록 · ${sel.label} <span class="sec-sub">${fmtT(sel.start)} → ${fmtT(sel.end)}</span>
+      <button class="back" data-focus="${sel.key}">← 실행 전체</button></div>`;
+    h += `<div class="tsbox"><div class="tsl">메모리 <span>GiB</span><span class="tst">피크 <b>${mPeak.toFixed(1)}</b><i>req ${sel.m.memReq}</i><i>lim ${sel.m.memLim}</i></span></div>`;
+    h += tsHtml('ts-mem', { t: sr.t, v: sr.mem, req: sel.m.memReq, lim: sel.m.memLim, height: 170, area: true, peak: true, cls: 'mem', xAxis: true }) + '</div>';
+    h += `<div class="tsbox"><div class="tsl">CPU <span>core</span><span class="tst">평균 <b>${cAvg.toFixed(1)}</b><i>req ${sel.m.cpuReq.toFixed(1)}</i><i>lim ${sel.m.cpuLim.toFixed(1)}</i><i class="${sel.m.thr >= 10 ? 'hot' : ''}">thr ${sel.m.thr}%</i></span></div>`;
+    h += tsHtml('ts-cpu', { t: sr.t, v: sr.cpu, req: sel.m.cpuReq, lim: sel.m.cpuLim, height: 110, cls: 'cpu', xAxis: true }) + '</div>';
+    h += `<div class="rnote"><span><i class="lg-b"></i>사용량</span><span><i class="lg-rq"></i>request</span><span><i class="lg-lm"></i>limit</span></div>`;
+    return h;
+  }
+
+  // 아무 칸도 고르지 않았을 때: 그래프 없이 핵심 정보만
+  const T0 = new Date(d.summary.start).getTime(), T1 = new Date(d.summary.end).getTime();
+  const durMin = Math.round((T1 - T0) / 60000);
+  const kv = [];
+  kv.push(['시작 → 종료', `${fmtDT(d.summary.start)} → ${fmtHM(d.summary.end)}`]);
+  let durTxt = fmtElapsed(durMin);
+  if (d.summary.recentDurMin) {
+    const r = d.summary.recentDurMin, avg = Math.round(mean(r.slice(-5, -1)));
+    const diff = Math.round((durMin / avg - 1) * 100);
+    durTxt += ` <span class="muted">최근 4주 평균 ${fmtElapsed(avg)} ·</span> <span class="wd ${diff > 0 ? 'up' : 'down'}">${diff > 0 ? '+' : ''}${diff}%</span>`;
+  }
+  kv.push(['소요', durTxt]);
+  const failed = cells.filter(c => c.m.failed);
+  // 최대 동시 Pod 수
+  let maxPods = 0;
+  cells.forEach(c => { const n = cells.filter(o => o.start < c.end && o.end > c.start && o.start <= c.start).length; maxPods = Math.max(maxPods, n); });
+  kv.push(['최대 동시 Pod', `${maxPods}`]);
+
+  // 눈여겨볼 모듈·step: 누르면 그 칸의 그래프로
+  const ratio = c => c.m.memPeak / c.m.memReq;
+  const topMem = cells.reduce((a, b) => (ratio(b) > ratio(a) ? b : a));
+  const topThr = cells.reduce((a, b) => (b.m.thr > a.m.thr ? b : a));
+  const topDur = cells.reduce((a, b) => (b.m.dur > a.m.dur ? b : a));
+  const link = (c, txt) => `<button class="kvlink" data-focus="${c.key}"><b class="val">${txt}</b><span class="who">${c.label}</span><span class="arr">›</span></button>`;
+  const kv2 = [
+    ['메모리 피크 최고', link(topMem, `${topMem.m.memPeak.toFixed(1)} GiB`)],
+    ['throttle 최고', link(topThr, `${topThr.m.thr}%`)],
+    ['가장 오래 걸린 step', link(topDur, fmtElapsed(topDur.m.dur))],
+  ];
+  const dl = rows => `<dl class="kv sumkv">${rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>`;
+  h += `<div class="sec-title">실행 요약</div>${dl(kv)}`;
+  h += `<div style="height:16px"></div>${dl(kv2)}`;
+  return h;
+}
+
 // raw_data 실행 하나(제품 × 일자). 오늘 = MOCK.rawData.today, 지난 날 = 목업 생성
 function getRawRun(name, i) {
   const R = MOCK.rawData;
@@ -1227,7 +1405,7 @@ function getRawRun(name, i) {
   const P = R.profile;
   const r = rng(`raw.${name}#${i}`);
   const date = rawDays()[i];
-  const [hh, mm] = (t.start || '01:00').split(':').map(Number);
+  const [hh, mm] = (t.start || R.time[name] || '01:00').split(':').map(Number);
   const start = new Date(date);
   start.setHours(hh, mm);
   const durMin = t.durMin != null ? t.durMin : Math.round(st === 'fail' ? lerp(3, 15, r()) : r() < P.longRate ? lerp(P.longDur[0], P.longDur[1], r()) : lerp(P.dur[0], P.dur[1], r()));
@@ -1358,8 +1536,9 @@ function renderDetail() {
   const metrics = d.modules.map(mod => mod.cells.map((c, i) => cellMetric(d.seed || name, d, mod.name, MOCK.steps[i], c)));
 
   h += `<div class="dbody"><div><div class="sec-title">모듈 × step</div>${gridHtml(d, metrics)}</div>
-    <div>${finished ? '<div class="sec-title">실행 요약</div><div class="tbd">미정</div>' : podsHtml(d)}</div></div>`;
+    <div>${finished ? pipeSeriesHtml(name, d, metrics) : podsHtml(d)}</div></div>`;
   el.innerHTML = h;
+  drawTs();
 }
 
 // 상세 패널 클릭: 보기 전환 / 셀·목록 강조
@@ -1393,6 +1572,121 @@ document.getElementById('dagtab').addEventListener('click', e => {
   renderDetail();
 });
 
+/* ---------- (3) 실패·재시도 ---------- */
+let openIssue = null;   // 펼친 행 index
+let openTry = null;     // 펼친 행에서 로그를 보는 시도 번호
+
+const isFailTry = r => r !== 'ok' && r !== 'run';
+// 시각 = 가장 최근에 실패한 시도의 시각, 원인 = 그 시도의 원인
+function lastFail(it) {
+  for (let i = it.tries.length - 1; i >= 0; i--) if (isFailTry(it.tries[i][1])) return { n: i + 1, at: it.tries[i][0], why: it.tries[i][1] };
+  return null;
+}
+
+// 목업 로그 (실제: Airflow 로그 API로 시도별 로그를 받아 마지막 20줄)
+function mockLog(it, n) {
+  const [hm, why] = it.tries[n - 1];
+  const ts = s => `[${it.date} ${s}]`;
+  const pod = `dpm-${it.name.toLowerCase()}${it.task ? '-' + it.task.replace('·', '-').toLowerCase() : '-raw'}-${(n * 7919).toString(36)}`;
+  const [h, m] = hm.split(':').map(Number);
+  const t = d => { const x = h * 60 + m - d; return `${pad(Math.floor(x / 60))}:${pad(x % 60)}:${pad((d * 13) % 60)}`; };
+  const head = [
+    `${ts(t(9))} INFO - Starting attempt ${n} of ${it.tryMax}`,
+    `${ts(t(8))} INFO - Creating pod ${pod}`,
+    `${ts(t(6))} INFO - ${it.task ? it.task.split('·')[1] : 'raw'}: loading input`,
+    `${ts(t(3))} INFO - ${it.task ? it.task.split('·')[1] : 'raw'}: processing chunk 31/40`,
+  ];
+  let tail;
+  if (/OOMKilled|exit 137/.test(why)) tail = [
+    `${ts(t(1))} WARNING - container memory near limit`,
+    `${ts(t(0))} ERROR - Pod ${pod} returned a failure`,
+    `${ts(t(0))} ERROR - container state: terminated, reason=${/OOM/.test(why) ? 'OOMKilled' : 'Error'}, exit_code=137`];
+  else if (/source table/.test(why)) tail = [
+    `${ts(t(0))} ERROR - SourceNotReady: table raw.${it.name.toLowerCase()}_lot_${it.date.replace(/-/g, '')} not found`];
+  else if (/KeyError/.test(why)) tail = [
+    `${ts(t(0))} ERROR - Traceback (most recent call last):`,
+    `  File "/app/dpm/raw/transform.py", line 88, in build_lot_table`,
+    `    lot = row['lot_id']`,
+    `KeyError: 'lot_id'`];
+  else if (/timeout/.test(why)) tail = [
+    `${ts(t(0))} ERROR - sqlalchemy.exc.OperationalError: connection to db-dpm:5432 timed out`];
+  else if (why === 'ok') tail = [`${ts(t(0))} INFO - Marking task as SUCCESS`];
+  else if (why === 'run') tail = [`${ts(t(0))} INFO - ${it.task ? it.task.split('·')[1] : 'raw'}: processing chunk 12/40 ...`];
+  else tail = [`${ts(t(0))} ERROR - ${why}`];
+  if (isFailTry(why)) tail.push(`${ts(t(0))} INFO - Marking task as ${n < it.tryMax ? 'UP_FOR_RETRY' : 'FAILED'} (try ${n}/${it.tryMax})`);
+  return [...head, ...tail].join('\n');
+}
+
+// 정렬: 재시도 소진 실패 → 재시도 예정 실패 → 재시도 중 → 재시도 후 성공, 같은 상태면 최근 실패 시각순
+function renderIssues() {
+  const ORDER = { final: 0, fail: 1, retry: 2, ok: 3 };
+  const key = it => (it.state === 'fail' && it.final ? 'final' : it.state);
+  const when = it => `${it.date} ${lastFail(it).at}`;
+  const list = MOCK.issues.map((it, idx) => ({ ...it, idx }))
+    .sort((a, b) => ORDER[key(a)] - ORDER[key(b)] || when(b).localeCompare(when(a)));
+  const cnt = k => MOCK.issues.filter(it => it.state === k).length;
+  const badge = st => ({
+    fail:  '<span class="ib fail">실패</span>',
+    retry: '<span class="ib retry">재시도 중</span>',
+    ok:    '<span class="ib ok">재시도 후 성공</span>',
+  }[st]);
+  const dshort = s => { const d = new Date(s); return md(d); };
+
+  let h = `<div class="panel-head"><h2>실패·재시도</h2><span class="sub">최근 7일</span>
+    <div class="wsum">
+      <span><i class="pd fail"></i>실패 <b>${cnt('fail')}</b></span>
+      <span><i class="pd run"></i>재시도 중 <b>${cnt('retry')}</b></span>
+      <span><i class="pd none"></i>재시도 후 성공 <b>${cnt('ok')}</b></span>
+    </div></div>`;
+  h += `<table class="itable"><thead><tr>
+    <th>상태</th><th>구분</th><th>제품</th><th>모듈·step</th><th>시각</th><th>시도</th><th>원인</th><th>다음 동작</th><th></th>
+  </tr></thead><tbody>`;
+  list.forEach(it => {
+    const lf = lastFail(it);
+    const open = openIssue === it.idx;
+    h += `<tr class="row ${it.state}${it.final ? ' final' : ''}${open ? ' open' : ''}" data-issue="${it.idx}">
+      <td>${badge(it.state)}</td>
+      <td class="dag">${it.dag}</td>
+      <td class="pn">${it.name}</td>
+      <td class="mono">${it.task || '—'}</td>
+      <td class="mono">${dshort(it.date)} ${lf.at}</td>
+      <td class="mono">${it.tries.length}/${it.tryMax}</td>
+      <td class="why">${it.state === 'fail' ? '' : `${lf.n}차: `}${lf.why}</td>
+      <td class="nx ${it.state === 'fail' && it.final ? 'act' : ''}">${it.next}</td>
+      <td class="tg">${open ? '▾' : '▸'}</td>
+    </tr>`;
+    if (open) {
+      const sel = openTry || lf.n;
+      const tries = it.tries.map(([hm, r], i) => {
+        const n = i + 1;
+        const res = r === 'ok' ? '<span class="tr-ok">성공</span>' : r === 'run' ? '<span class="tr-run">실행중</span>' : `<span class="tr-fail">${r}</span>`;
+        return `<div class="try${n === sel ? ' on' : ''}" data-try="${n}"><span class="n">${n}차</span><span class="t">${dshort(it.date)} ${hm}</span>${res}</div>`;
+      }).join('');
+      h += `<tr class="exp"><td colspan="9"><div class="expbox">
+        <div class="tries">${tries}</div>
+        <div class="logbox">
+          <div class="loghead">${sel}차 시도 로그 <span>마지막 20줄</span></div>
+          <pre class="log">${mockLog(it, sel).replace(/</g, '&lt;')}</pre>
+        </div></div></td></tr>`;
+    }
+  });
+  h += '</tbody></table>';
+  document.getElementById('p3').innerHTML = h;
+}
+
+// 행 클릭 → 펼치기/접기, 시도 클릭 → 그 시도의 로그
+document.getElementById('p3').addEventListener('click', e => {
+  if (e.target.closest('a')) return;
+  const tr = e.target.closest('[data-try]');
+  if (tr) { openTry = +tr.dataset.try; renderIssues(); return; }
+  const row = e.target.closest('tr[data-issue]');
+  if (!row) return;
+  const i = +row.dataset.issue;
+  openIssue = openIssue === i ? null : i;
+  openTry = null;
+  renderIssues();
+});
+
 /* ---------- tooltip ---------- */
 const tip = document.getElementById('tip');
 document.addEventListener('mousemove', e => {
@@ -1405,6 +1699,7 @@ document.addEventListener('mousemove', e => {
   tip.style.top = (e.clientY + 14) + 'px';
 });
 
+
 document.getElementById('meta').textContent =
   `기준 ${md(NOW)} (${DOW[NOW.getDay()]}) ${pad(NOW.getHours())}:${pad(NOW.getMinutes())} · 목업 데이터`;
 document.getElementById('legend1').innerHTML = legendHtml();
@@ -1412,6 +1707,7 @@ renderPipeline();
 // 처음 그린 pipeline 격자 높이로 상자 고정 → raw_data로 바꿔도 크기 유지
 { const gb = document.getElementById('gridbox'); if (gb.offsetHeight) gb.style.minHeight = gb.offsetHeight + 'px'; }
 renderDetail();
+renderIssues();
 </script>
 </body>
 </html>
