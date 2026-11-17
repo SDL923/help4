@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DPM 3단계 발전 방향</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #f0f2f5;
+    --text: #1b1f24;
+    --muted: #5d6673;
+    --line: #dde1e7;
+    --human: #e4572e;        /* 사람이 하는 일 */
+    --human-soft: #fde4dc;
+    --auto: #4a6fa5;         /* 코드·시스템 자동 */
+    --auto-soft: #dde7f4;
+    --agent: #0f9d8a;        /* 에이전트 */
+    --agent-soft: #d4f1ec;
+    --now: #4a6fa5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121417; --surface: #1b1e23; --surface-2: #23272d;
+      --text: #e8eaed; --muted: #9aa3ae; --line: #2f343b;
+      --human: #ff7a50; --human-soft: #4a2418;
+      --auto: #7fa3d6; --auto-soft: #1f2d42;
+      --agent: #3cc7b2; --agent-soft: #133a35; --now: #7fa3d6;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121417; --surface: #1b1e23; --surface-2: #23272d;
+    --text: #e8eaed; --muted: #9aa3ae; --line: #2f343b;
+    --human: #ff7a50; --human-soft: #4a2418;
+    --auto: #7fa3d6; --auto-soft: #1f2d42;
+    --agent: #3cc7b2; --agent-soft: #133a35; --now: #7fa3d6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+    line-height: 1.5; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 40px 16px 64px; }
+  section { margin-top: 0; }
+  h1 { font-size: clamp(26px, 4vw, 38px); margin: 0 0 12px; letter-spacing: -0.02em; }
+  h2 { font-size: 22px; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); margin: 0 0 20px; }
+  .eyebrow { font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+
+  /* Stage cards */
+  .stages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .stage { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; position: relative; display: flex; flex-direction: column; }
+  .stage.now { border: 2px solid var(--now); }
+  .badge { position: absolute; top: -12px; left: 16px; background: var(--now); color: #fff; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+  .stage .num { font-size: 13px; font-weight: 700; color: var(--muted); }
+  .stage h3 { margin: 2px 0 4px; font-size: 19px; }
+  .stage .who { font-size: 14px; color: var(--muted); margin-bottom: 12px; }
+  .stage ul { margin: 0 0 14px; padding-left: 18px; font-size: 14.5px; }
+  .stage li { margin: 4px 0; }
+  .stage .role { margin-top: auto; padding-top: 12px; border-top: 1px dashed var(--line); font-size: 14px; }
+  .stage .role b { color: var(--human); }
+
+  /* 2단계 → 3단계 연결 띠 */
+  .link-row { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; }
+  .link { position: relative; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; margin-top: 14px; }
+  .link::before, .link::after { content: ""; position: absolute; top: -14px; height: 14px; width: 2px; }
+  .link::before { left: 25%; background: var(--auto); }
+  .link::after { right: 25%; background: var(--agent); }
+  .lk-from, .lk-to { text-align: center; font-size: 13.5px; font-weight: 700; padding: 7px 10px; border-radius: 8px; }
+  .lk-from { background: var(--auto-soft); color: var(--auto); }
+  .lk-to { background: var(--agent-soft); color: var(--agent); }
+  .lk-ar { font-size: 12.5px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+  .lk-ar::after { content: " →"; font-size: 16px; }
+
+  @media (max-width: 760px) {
+    .stages, .link-row { grid-template-columns: 1fr; }
+    .link-row > div:first-child { display: none; }
+    .link::before, .link::after { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 3단계 -->
+  <section>
+    <h2>3단계 발전 방향</h2>
+    <p class="sub">무엇을 볼지 누가 정하느냐: <b>사람</b> → <b>코드</b> → <b>LLM</b></p>
+    <div class="stages">
+      <div class="stage">
+        <div class="num">1단계 · 기존 방식</div>
+        <h3>사람이 직접 찾아봄</h3>
+        <div class="who">Airflow UI · Grafana를 오가며 확인</div>
+        <ul>
+          <li>매일 UI에서 발행 상태 확인</li>
+          <li>오류 시 로그를 직접 읽고 원인 판단</li>
+          <li>메모리·CPU는 Grafana에서 따로 확인</li>
+          <li>발행 보고 직접 작성</li>
+        </ul>
+        <div class="role">사람: <b>감시·진단·조치·보고 전부</b></div>
+      </div>
+      <div class="stage now">
+        <span class="badge">운영 대시보드</span>
+        <div class="num">2단계 · 대시보드 + 알림</div>
+        <h3>대시보드가 모아서 알려줌</h3>
+        <div class="who">Airflow·Prometheus API로 자동 수집 · 규칙 기반</div>
+        <ul>
+          <li><b>통합 화면</b>: 실행 상태와 리소스를 한 화면에서</li>
+          <li><b>자동 보고</b>: 매일 메신저·메일 발송</li>
+          <li><b>오류 알림</b>: 실패·재시도 즉시 통보</li>
+          <li><b>오류 원인 분류</b>: 규칙으로 분류하고 근거 로그·리소스를 함께 표시</li>
+        </ul>
+        <div class="role">사람: <b>판단·조치</b></div>
+      </div>
+      <div class="stage">
+        <div class="num">3단계 · 에이전트</div>
+        <h3>에이전트가 조사·제안·조치</h3>
+        <div class="who">이벤트 발생 → LLM이 tool을 골라 반복 조사</div>
+        <ul>
+          <li>상시 감시, 필요할 때 리소스 조회</li>
+          <li>필요한 정보를 스스로 더 찾아 원인 분석</li>
+          <li>조치 제안 → <b>승인</b> → 실행 → 결과 보고</li>
+          <li>질문에 답변: "이번 주 OO제품 발행 왜 오래 걸려?"</li>
+        </ul>
+        <div class="role">사람: <b>승인·감독</b></div>
+      </div>
+    </div>
+    <div class="link-row">
+      <div></div>
+      <div class="link">
+        <span class="lk-from">대시보드의 API 호출·가공 코드</span>
+        <span class="lk-ar">재사용 · tool로 감쌈</span>
+        <span class="lk-to">에이전트가 쓰는 tool</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
