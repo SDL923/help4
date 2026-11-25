@@ -74,8 +74,70 @@
   .lk-ar { font-size: 12.5px; font-weight: 700; color: var(--muted); white-space: nowrap; }
   .lk-ar::after { content: " →"; font-size: 16px; }
 
+  /* 구조도 */
+  section.arch { margin-top: 56px; }
+  .arch-box { border: 1px solid var(--line); border-radius: 14px; padding: 16px 20px; background: var(--surface); overflow-x: auto; max-width: 850px; }
+  .arch-box svg { display: block; width: 100%; min-width: 560px; height: auto; font-family: inherit; }
+  .arch .pod { fill: none; stroke: var(--muted); stroke-opacity: .45; stroke-width: 1.5; stroke-dasharray: 6 5; }
+  .arch .pod-t { font-size: 16px; font-weight: 700; fill: var(--text); }
+  .arch .ln line, .arch .ln polyline { stroke: var(--muted); stroke-width: 1.8; fill: none; }
+  .arch .ah { fill: var(--muted); }
+  .arch .lb text { font-size: 12.5px; font-weight: 600; fill: var(--muted); }
+  .arch .lb .v { writing-mode: vertical-rl; }
+  .arch .bx rect { fill: var(--agent-soft); stroke: var(--agent); stroke-width: 1.3; }
+  .arch .bx .t { font-size: 17px; font-weight: 700; fill: var(--text); text-anchor: middle; }
+  .arch .bx .s { font-size: 13px; fill: var(--agent); text-anchor: middle; }
+  .arch .bx .k { font-size: 11px; fill: var(--muted); text-anchor: middle; }
+  .arch .bx rect.core { stroke-width: 2; }
+  .arch .bx.code rect { fill: var(--auto-soft); stroke: var(--auto); }
+  .arch .bx.code .s { fill: var(--auto); }
+  .arch .bx.llm rect { fill: var(--agent-soft); stroke: var(--agent); stroke-width: 2.2; }
+  .arch .bx.store rect { fill: var(--surface); stroke: var(--muted); stroke-opacity: .6; }
+  .arch .bx.store .s { fill: var(--muted); }
+  .arch-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 12px; font-size: 13px; color: var(--muted); }
+  .arch-legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--f); border: 1.5px solid var(--b); }
+  .arch .bx.ex rect { fill: var(--human-soft); stroke: var(--human); }
+  .arch .bx.ex .t, .arch .bx.ex .s { fill: var(--human); }
+  .arch .bx.out rect { fill: var(--surface-2); stroke: var(--line); stroke-width: 1.5; }
+  .arch .bx.out .s { fill: var(--muted); }
+  .arch-notes { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 12px; font-size: 14px; color: var(--muted); }
+  .arch-notes b { color: var(--text); }
+
+  /* 동작 흐름 */
+  section.fl { margin-top: 56px; }
+  .fl-row { display: grid; grid-template-columns: 1fr 34px 1.15fr 34px 1fr 50px 1fr; align-items: stretch; }
+  .fl-step { position: relative; background: var(--surface); border: 1.5px solid var(--line); border-radius: 14px; padding: 18px 16px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .fl-step.core { border: 2px solid var(--agent); background: var(--agent-soft); }
+  .fl-step.human { border: 2px solid var(--human); }
+  .fl-step.exec { background: var(--human-soft); border-color: var(--human-soft); }
+  .fl-n { width: 26px; height: 26px; border-radius: 50%; background: var(--text); color: var(--bg); font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+  .fl-step.core .fl-n { background: var(--agent); color: #fff; }
+  .fl-step.human .fl-n, .fl-step.exec .fl-n { background: var(--human); color: #fff; }
+  .fl-t { font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
+  .fl-d { font-size: 14.5px; line-height: 1.5; }
+  .fl-or { font-size: 13px; color: var(--muted); padding-left: 10px; border-left: 2px solid var(--line); }
+  .fl-note { font-size: 13px; color: var(--muted); }
+  .fl-loop { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: 13px; color: var(--agent); font-weight: 700; }
+  .fl-loop span { background: var(--surface); border: 1px solid var(--agent); border-radius: 6px; padding: 2px 7px; }
+  .fl-loop em { font-style: normal; width: 100%; font-size: 12.5px; }
+  .fl-msg { font-size: 13px; background: var(--surface-2); border-radius: 8px; padding: 8px 10px; }
+  .fl-msg div { margin-top: 6px; display: flex; gap: 6px; }
+  .fl-msg .ok, .fl-msg .no { font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 5px; }
+  .fl-msg .ok { background: var(--agent); color: #fff; }
+  .fl-msg .no { background: var(--surface); border: 1px solid var(--line); }
+  .fl-who { position: absolute; top: -11px; right: 14px; background: var(--human); color: #fff; font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 999px; }
+  .fl-tags { margin-top: auto; padding-top: 8px; border-top: 1px dashed var(--line); display: flex; flex-wrap: wrap; gap: 4px; }
+  .fl-tags span { font-size: 11.5px; color: var(--muted); background: var(--surface-2); padding: 2px 8px; border-radius: 999px; }
+  .fl-step.core .fl-tags span { background: var(--surface); }
+  .fl-ar { display: flex; align-items: center; justify-content: center; text-align: center; font-size: 20px; color: var(--muted); }
+  .fl-ar.ap { font-size: 12px; font-weight: 800; color: var(--human); line-height: 1.4; }
+  .fl-base { margin-top: 14px; border: 1.5px dashed var(--line); border-radius: 12px; padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 6px 24px; font-size: 13.5px; color: var(--muted); }
+  .fl-base b { color: var(--text); }
+
   @media (max-width: 760px) {
-    .stages, .link-row { grid-template-columns: 1fr; }
+    .stages, .link-row, .fl-row { grid-template-columns: 1fr; }
+    .fl-ar { padding: 6px 0; transform: rotate(90deg); }
+    .fl-ar.ap { transform: none; }
     .link-row > div:first-child { display: none; }
     .link::before, .link::after { display: none; }
   }
@@ -134,6 +196,150 @@
         <span class="lk-ar">재사용 · tool로 감쌈</span>
         <span class="lk-to">에이전트가 쓰는 tool</span>
       </div>
+    </div>
+  </section>
+
+  <!-- 3단계 에이전트 구조도 -->
+  <section class="arch">
+    <h2>3단계 에이전트 구조도</h2>
+    <p class="sub">파이썬 서비스 1개가 상시 대기하다가, 일이 생길 때만 LLM을 호출한다</p>
+    <div class="arch-legend">
+      <span style="--f:var(--auto-soft);--b:var(--auto)">코드 (규칙대로 동작)</span>
+      <span style="--f:var(--agent-soft);--b:var(--agent)">LLM 판단</span>
+      <span style="--f:var(--human-soft);--b:var(--human)">승인 필요</span>
+      <span style="--f:var(--surface);--b:var(--muted)">저장</span>
+      <span style="--f:var(--surface-2);--b:var(--line)">외부 시스템</span>
+    </div>
+    <div class="arch-box">
+      <svg viewBox="0 0 856 540" role="img" aria-label="DPM 운영 에이전트 구조도">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="ah"/>
+          </marker>
+        </defs>
+
+        <!-- Pod 경계 -->
+        <rect x="160" y="14" width="536" height="410" rx="16" class="pod"/>
+        <text x="178" y="44" class="pod-t">DPM 운영 에이전트</text>
+
+        <!-- 연결선 -->
+        <g class="ln">
+          <line x1="338" y1="150" x2="338" y2="198" marker-end="url(#ah)"/>
+          <line x1="608" y1="150" x2="608" y2="198" marker-end="url(#ah)"/>
+          <line x1="716" y1="110" x2="680" y2="110" marker-end="url(#ah)"/>
+          <line x1="678" y1="235" x2="714" y2="235" marker-end="url(#ah)"/>
+          <line x1="142" y1="235" x2="176" y2="235" marker-start="url(#ah)" marker-end="url(#ah)"/>
+          <line x1="248" y1="272" x2="248" y2="318" marker-start="url(#ah)" marker-end="url(#ah)"/>
+          <line x1="428" y1="270" x2="428" y2="318" marker-end="url(#ah)"/>
+          <line x1="608" y1="270" x2="608" y2="318" marker-end="url(#ah)"/>
+          <line x1="428" y1="400" x2="428" y2="468" marker-end="url(#ah)"/>
+          <line x1="608" y1="400" x2="608" y2="468" marker-end="url(#ah)"/>
+        </g>
+
+        <!-- 선 라벨 -->
+        <g class="lb">
+          <text x="346" y="179">새 이벤트 · 보고</text>
+          <text x="616" y="179">질문 · 승인</text>
+          <text x="697" y="226" text-anchor="middle">알림</text>
+          <text x="616" y="299">승인 후</text>
+        </g>
+
+        <g class="bx code">
+          <rect x="178" y="70" width="320" height="80" rx="10"/>
+          <text x="338" y="100" class="t">스케줄러</text>
+          <text x="338" y="122" class="s">10분마다 Airflow API 조회 · 09:00 보고</text>
+          <text x="338" y="140" class="k">APScheduler · 실패·재시도가 생기면 에이전트 루프 호출</text>
+
+          <rect x="538" y="70" width="140" height="80" rx="10"/>
+          <text x="608" y="100" class="t">웹 서버</text>
+          <text x="608" y="122" class="s">메신저 요청 수신</text>
+          <text x="608" y="140" class="k">FastAPI</text>
+
+          <rect x="358" y="320" width="140" height="80" rx="10"/>
+          <text x="428" y="354" class="t">조회 tool</text>
+          <text x="428" y="378" class="s">읽기 전용</text>
+        </g>
+        <g class="bx llm">
+          <rect x="178" y="200" width="500" height="70" rx="10"/>
+          <text x="428" y="230" class="t">에이전트 루프</text>
+          <text x="428" y="254" class="s">LLM ⇄ tool 반복 → 알림 · 승인 요청</text>
+        </g>
+        <g class="bx store">
+          <rect x="178" y="320" width="140" height="80" rx="10"/>
+          <text x="248" y="354" class="t">DB</text>
+          <text x="248" y="378" class="s">처리 기록 · 승인 상태</text>
+        </g>
+        <g class="bx ex">
+          <rect x="538" y="320" width="140" height="80" rx="10"/>
+          <text x="608" y="354" class="t">실행 tool</text>
+          <text x="608" y="378" class="s">승인 후에만</text>
+        </g>
+
+        <!-- 외부 시스템 -->
+        <g class="bx out">
+          <rect x="10" y="200" width="130" height="70" rx="10"/>
+          <text x="75" y="241" class="t">사내 LLM</text>
+
+          <rect x="716" y="70" width="130" height="200" rx="10"/>
+          <text x="781" y="162" class="t">메신저 · 메일</text>
+          <text x="781" y="186" class="s">알림 · 질문 · 승인</text>
+
+          <rect x="358" y="470" width="320" height="56" rx="10"/>
+          <text x="518" y="504" class="t">Airflow API · Prometheus API</text>
+        </g>
+      </svg>
+    </div>
+    <div class="arch-notes">
+      <span><b>DAG 수정 없음</b> · 폴링으로 감시, 콜백 없음</span>
+      <span><b>LLM은 이벤트 때만</b> · 평소엔 대기</span>
+      <span><b>실행은 승인 후에만</b> · 조회 tool은 읽기 전용</span>
+    </div>
+  </section>
+
+  <!-- 3단계 에이전트 동작 흐름 -->
+  <section class="fl">
+    <h2>3단계 에이전트 동작 흐름</h2>
+    <p class="sub">일이 생기면 감지 → 조사 → 승인 요청 → 실행. 사람은 <b style="color:var(--human)">승인</b>만 한다</p>
+    <div class="fl-row">
+      <div class="fl-step">
+        <div class="fl-n">1</div>
+        <div class="fl-t">감지</div>
+        <div class="fl-d">10분마다 Airflow를 점검해 <b>새 실패·재시도</b>만 골라냄</div>
+        <div class="fl-or">또는 메신저로 들어온 질문</div>
+        <div class="fl-note">LLM 없이 코드로</div>
+        <div class="fl-tags"><span>스케줄러</span><span>점검 규칙</span><span>웹 서버</span></div>
+      </div>
+      <div class="fl-ar">→</div>
+      <div class="fl-step core">
+        <div class="fl-n">2</div>
+        <div class="fl-t">조사</div>
+        <div class="fl-d">사내 LLM이 <b>무엇을 더 볼지 스스로 정해</b> tool 호출</div>
+        <div class="fl-loop"><span>LLM</span>→<span>조회 tool</span>→<span>결과</span><em>↺ 부족하면 반복</em></div>
+        <div class="fl-note">Airflow · Prometheus 조회 (읽기 전용)</div>
+        <div class="fl-tags"><span>에이전트 루프</span><span>사내 LLM</span><span>조회 tool</span></div>
+      </div>
+      <div class="fl-ar">→</div>
+      <div class="fl-step human">
+        <span class="fl-who">사람</span>
+        <div class="fl-n">3</div>
+        <div class="fl-t">알림 · 승인 요청</div>
+        <div class="fl-d">원인과 근거를 정리해 메신저로 알림. 조치가 필요하면 승인 요청</div>
+        <div class="fl-msg">"limit 40GiB로 올려 재실행할까요?"<div><span class="ok">승인</span><span class="no">거절</span></div></div>
+        <div class="fl-tags"><span>메신저 · 메일</span></div>
+      </div>
+      <div class="fl-ar ap">승인 시<br>→</div>
+      <div class="fl-step exec">
+        <div class="fl-n">4</div>
+        <div class="fl-t">실행</div>
+        <div class="fl-d">승인된 조치만 실행:<br><b>재실행 · 리소스 변경</b></div>
+        <div class="fl-note">실행 후 결과를 다시 메신저로 보고</div>
+        <div class="fl-tags"><span>실행 tool</span></div>
+      </div>
+    </div>
+    <div class="fl-base">
+      <span><b>DPM 운영 에이전트</b> · K8s Pod 1개 상시 실행</span>
+      <span><b>DB</b> · 처리한 이벤트 · 승인 이력</span>
+      <span><b>DAG 수정 없음</b> · 폴링으로 감시</span>
     </div>
   </section>
 
