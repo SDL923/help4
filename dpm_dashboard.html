@@ -156,7 +156,9 @@
   /* module × step grid */
   .mgrid { display: grid; gap: 3px; }
   .mgrid .mh { font: 500 10px/1 var(--mono); color: var(--text2); text-align: center; padding-bottom: 3px; }
-  .mgrid .ml { font: 500 11px/21px var(--mono); color: var(--text2); padding-right: 6px; text-align: right; white-space: nowrap; }
+  .mgrid .ml { font: 500 11px/21px var(--mono); color: var(--text2); padding: 0 6px; text-align: right; white-space: nowrap; cursor: pointer; border-radius: 3px; }
+  .mgrid .ml:hover { background: var(--gray-bg); color: var(--text); }
+  .mgrid .ml.on { background: var(--text); color: #fff; }
   .mgrid .ml.fail { color: var(--fail); }
   .mgrid .ml.done { color: var(--ok); }
   .mc {
@@ -365,6 +367,10 @@
   .tsv .lmt { fill: var(--fail); }
   .tsv .rq { stroke: #57606a; stroke-width: 1; opacity: .8; }
   .tsv .rqv { fill: none; stroke: #57606a; stroke-width: 1; opacity: .8; }
+  .tsv .lmv { fill: none; stroke: var(--fail); stroke-width: 1.2; stroke-dasharray: 4 3; }
+  .tsv .sg { stroke: #8c959f; stroke-width: 1; stroke-dasharray: 2 2; }
+  .tsv .sgt { font: 600 10px var(--mono); fill: var(--text2); }
+  .tsv .sgt.f { fill: var(--fail); }
   .tsv .lm { stroke: var(--fail); stroke-width: 1.2; stroke-dasharray: 4 3; }
   .tsv .ar { fill: var(--run-bg); opacity: .8; }
   .tsv .ln { fill: none; stroke-width: 1.5; stroke-linejoin: round; }
@@ -450,6 +456,43 @@
   .ib.ok { background: var(--gray-bg); color: var(--text2); font-weight: 500; }
 
   /* ---------- tooltip ---------- */
+  /* ---------- (0) DPM 리소스 현황 ---------- */
+  #p0 { padding: 10px 18px; position: relative; }
+  .res { display: flex; gap: 16px; align-items: stretch; }
+  .res-left { display: flex; flex-direction: column; flex: none; width: 136px; }
+  .res-title { font-size: 14px; font-weight: 700; white-space: nowrap; }
+  .res-live { margin: 16px 0 0; align-self: flex-start; }
+  .res-live .pd { animation: none; }
+  .res-boxes { display: flex; flex-direction: column; gap: 10px; padding-top: 18px; }   /* 고정 간격: 그래프를 펼쳐도 제자리 */
+  .rbox { position: relative; padding: 1px 0 0 12px; cursor: pointer; }
+  .rbox::before { content: ''; position: absolute; left: 0; top: 2px; bottom: 2px; width: 3px; border-radius: 2px; background: var(--border-soft); }
+  .rbox:hover::before { background: #c4ccd4; }
+  .rbox.on::before { background: var(--text); }
+  .rbox .k { font-size: 12px; color: var(--text3); }
+  .rbox.on .k { color: var(--text); font-weight: 600; }
+  .rbox .v { font: 700 20px/1.3 var(--mono); white-space: nowrap; }
+  .rbox .v small { margin-left: 4px; font-size: 11px; font-weight: 400; color: var(--text3); }
+  .res-right { flex: 1; min-width: 0; padding-left: 20px; border-left: 1px solid var(--border-soft); }
+  .res-head { display: flex; align-items: flex-end; }
+  .res-head .unit { width: 36px; text-align: right; font: 10px var(--mono); color: var(--text3); }   /* 세로축 숫자와 같은 줄에 맞춤 */
+  .res-head .rsel { margin-left: auto; align-self: center; height: 26px; padding: 0 28px 0 10px; font: inherit; font-size: 12px; color: var(--text);
+                    border: 1px solid var(--border); border-radius: 6px; cursor: pointer; appearance: none;
+                    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2359636e' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 10px center; }
+  .res-head .rsel:hover { border-color: #afb8c1; }
+  .res-head .rsel:focus { outline: 2px solid rgba(9,105,218,.3); outline-offset: 1px; }
+  .res-exp { position: absolute; right: 8px; bottom: 6px; width: 24px; height: 24px; padding: 0;
+             display: flex; align-items: center; justify-content: center;
+             border: 0; border-radius: 50%; background: transparent; color: var(--text3); cursor: pointer; }
+  .res-exp:hover { background: var(--gray-bg); color: var(--text); }
+  .res-exp svg { transition: transform .32s; }
+  .res-exp.open svg { transform: rotate(180deg); }
+  .tsv .stk { stroke: none; opacity: .88; }
+  .tsv .dl { stroke: var(--border); }
+  .tsv .xt { stroke: #8c959f; stroke-width: 1; }
+  .tsv .hv { stroke: var(--text); stroke-width: 1; opacity: .5; }
+  .tsv .nowv { fill: var(--run); font-weight: 600; }
+
+  #tip .tsw { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; vertical-align: 0; }
   #tip {
     position: fixed; z-index: 100; pointer-events: none; display: none;
     background: #1f2328; color: #fff; font: 11px/1.5 var(--mono);
@@ -468,6 +511,9 @@
 </header>
 
 <main>
+  <!-- (0) DPM 리소스 현황 -->
+  <section class="panel full" id="p0"></section>
+
   <!-- (1) 발행 현황: pipeline / raw_data 전환 -->
   <section class="panel" id="p1">
     <div class="panel-head">
@@ -924,7 +970,7 @@ function gridHtml(d, metrics) {
   h += '<div></div>' + steps.map(s => `<div class="mh">${s}</div>`).join('');
   d.modules.forEach((mod, mi) => {
     const mcls = mod.cells.includes('F') ? 'fail' : (mod.cells.every(c => c === 'D') ? 'done' : '');
-    h += `<div class="ml ${mcls}">${mod.name}</div>`;
+    h += `<div class="ml ${mcls}${focus === 'mod:' + mod.name ? ' on' : ''}" data-mod="${mod.name}" data-tip="${mod.name} 전체 step 리소스 보기">${mod.name}</div>`;
     mod.cells.forEach((c, i) => {
       const m = metrics[mi][i];
       const key = `${mod.name}.${steps[i]}`;
@@ -1261,9 +1307,9 @@ function drawTs() {
     if (!el || !el.clientWidth) return;
     const d = TS[id];
     const W = el.clientWidth, H = d.height;
-    const L = 34, R = 64, T = 10, B = d.xAxis ? 20 : 6;
+    const L = 34, R = 64, T = d.segs ? 22 : 10, B = d.xAxis ? 20 : 6;
     const t0 = d.t[0], t1 = d.t[d.t.length - 1];
-    const ymax = d.lim != null ? d.lim * 1.08 : Math.max(...d.v, ...(d.reqV || [0])) * 1.12;
+    const ymax = d.lim != null ? d.lim * 1.08 : Math.max(...d.v, ...(d.reqV || [0]), ...(d.limV || [0])) * (d.limV ? 1.05 : 1.12);
     const x = v => L + (W - L - R) * (v - t0) / (t1 - t0 || 1);
     const y = v => T + (H - T - B) * (1 - v / ymax);
     let s = `<svg width="${W}" height="${H}" class="tsv">`;
@@ -1291,7 +1337,18 @@ function drawTs() {
     if (d.reqV) {
       const rp = d.reqV.map((v, i) => `${x(d.t[i]).toFixed(1)},${y(v).toFixed(1)}`);
       const rmax = Math.max(...d.reqV);
-      s += `<path class="rqv" d="M${rp.join(' L')}"/><text class="lt" x="${W - R + 4}" y="${y(rmax) + 3}">req 합</text>`;
+      s += `<path class="rqv" d="M${rp.join(' L')}"/><text class="lt" x="${W - R + 4}" y="${y(rmax) + 3}">${d.reqLabel || 'req 합'}</text>`;
+    }
+    if (d.limV) {   // step마다 다른 limit (계단 점선)
+      const lp = d.limV.map((v, i) => `${x(d.t[i]).toFixed(1)},${y(v).toFixed(1)}`);
+      s += `<path class="lmv" d="M${lp.join(' L')}"/><text class="lt lmt" x="${W - R + 4}" y="${y(Math.max(...d.limV)) + 3}">lim</text>`;
+    }
+    if (d.segs) {   // step 경계: 세로선 + 위쪽에 step 이름
+      d.segs.forEach((g, i) => {
+        const gx = x(g.t0), gx2 = x(g.t1);
+        if (i > 0) s += `<line class="sg" x1="${gx}" x2="${gx}" y1="${T - 12}" y2="${H - B}"/>`;
+        s += `<text class="sgt${g.fail ? ' f' : ''}" x="${(gx + gx2) / 2}" y="${T - 3}" text-anchor="middle">${g.label}</text>`;
+      });
     }
     // 선 (+ 메모리는 면)
     const pts = d.v.map((v, i) => `${x(d.t[i]).toFixed(1)},${y(v).toFixed(1)}`);
@@ -1341,6 +1398,38 @@ function pipeSeriesHtml(name, d, metrics) {
   const asRun = c => ({ start: c.start, end: c.end,
     res: { mem: { use: c.m.memPeak, req: c.m.memReq, lim: c.m.memLim }, cpu: { avg: c.m.cpuAvg, req: c.m.cpuReq, lim: c.m.cpuLim } } });
   const fmtT = t => `${pad(new Date(t).getHours())}:${pad(new Date(t).getMinutes())}`;
+  // 모듈 이름을 눌렀을 때: 그 모듈의 step들을 시간 순서로 이어 붙인 하나의 시계열
+  if (focus && focus.startsWith('mod:')) {
+    const mod = focus.slice(4);
+    const mc = cells.filter(c => c.key.startsWith(mod + '.'));
+    if (mc.length) {
+      let h = '';
+      const t = [], mem = [], cpu = [], mReq = [], mLim = [], cReq = [], cLim = [], segs = [];
+      mc.forEach(c => {
+        const sr = rawSeries(asRun(c), `${seed}.${c.key}`);
+        const k = Math.max(20, Math.round(300 * (c.end - c.start) / (mc[mc.length - 1].end - mc[0].start)));   // step 길이에 비례해 점 수
+        for (let i = 0; i < k; i++) {
+          const j = Math.round(i / (k - 1) * (sr.t.length - 1));
+          t.push(sr.t[j]); mem.push(sr.mem[j]); cpu.push(sr.cpu[j]);
+          mReq.push(c.m.memReq); mLim.push(c.m.memLim); cReq.push(c.m.cpuReq); cLim.push(c.m.cpuLim);
+        }
+        segs.push({ t0: c.start.getTime(), t1: c.end.getTime(), label: c.label.split('·')[1], fail: c.m.failed });
+      });
+      const pk = mem.indexOf(Math.max(...mem));
+      const pkStep = segs.find(g => t[pk] >= g.t0 && t[pk] <= g.t1);
+      const cAvg = cpu.reduce((a, b) => a + b, 0) / cpu.length;
+      const thrMax = mc.reduce((a, c) => (c.m.thr > a.m.thr ? c : a));
+      h += `<div class="sec-title" style="display:flex;align-items:baseline;gap:4px">리소스 기록 · ${mod} 전체 step <span class="sec-sub">${fmtT(mc[0].start)} → ${fmtT(mc[mc.length - 1].end)} · ${mc.length}개 step</span>
+        <button class="back" data-mod="${mod}">← 실행 전체</button></div>`;
+      h += `<div class="tsbox"><div class="tsl">메모리 <span>GiB</span><span class="tst">피크 <b>${mem[pk].toFixed(1)}</b><i>${pkStep ? pkStep.label : ''}</i></span></div>`;
+      h += tsHtml('ts-mem', { t, v: mem, reqV: mReq, limV: mLim, reqLabel: 'req', lim: null, segs, height: 190, area: true, peak: true, cls: 'mem', xAxis: true }) + '</div>';
+      h += `<div class="tsbox"><div class="tsl">CPU <span>core</span><span class="tst">평균 <b>${cAvg.toFixed(1)}</b><i class="${thrMax.m.thr >= 10 ? 'hot' : ''}">thr 최고 ${thrMax.m.thr}% (${thrMax.label.split('·')[1]})</i></span></div>`;
+      h += tsHtml('ts-cpu', { t, v: cpu, reqV: cReq, limV: cLim, reqLabel: 'req', lim: null, segs, height: 120, cls: 'cpu', xAxis: true }) + '</div>';
+      h += `<div class="rnote"><span><i class="lg-b"></i>사용량</span><span><i class="lg-rq"></i>request</span><span><i class="lg-lm"></i>limit</span><span>· 세로선 = step 경계 (request·limit은 step마다 다름)</span></div>`;
+      return h;
+    }
+  }
+
   const sel = focus && cells.find(c => c.key === focus);
   let h = '';
 
@@ -1557,6 +1646,8 @@ document.getElementById('p2').addEventListener('click', e => {
     if (focus && f.dataset.setview) view = f.dataset.setview;
     renderDetail(); return;
   }
+  const ml = e.target.closest('[data-mod]');
+  if (ml) { const k = 'mod:' + ml.dataset.mod; focus = focus === k ? null : k; renderDetail(); return; }
   const c = e.target.closest('[data-cell]');
   if (c) { focus = focus === c.dataset.cell ? null : c.dataset.cell; renderDetail(); }
 });
@@ -1687,12 +1778,266 @@ document.getElementById('p3').addEventListener('click', e => {
   renderIssues();
 });
 
+/* ---------- (0) DPM 리소스 현황 ---------- */
+// 실제: sum by (product) (container_memory_working_set_bytes{namespace="dpm"}) 최근 7일, step 20분
+//       (product = kube_pod_labels 조인). CPU는 rate(container_cpu_usage_seconds_total[5m])
+let resMetric = 'mem';
+// [구현 시 주의] 목업이라 제품 순서대로 색을 고정했음. 실제로는 제품이 계속 늘어나므로 제품별 색을 직접 고정하지 말 것
+const RES_COLORS = ['#4c78a8', '#f58518', '#54a24b', '#72b7b2', '#eeca3b', '#b279a2', '#ff9da6', '#9d755d', '#bab0ac'];
+// raw_data는 pipeline과 다른 색 묶음
+const RAW_COLORS = ['#1b9e77', '#d95f02', '#7570b3', '#e7298a', '#66a61e', '#e6ab02', '#a6761d', '#666666'];
+const layerColor = ly => (ly.dag === 'pipeline' ? RES_COLORS : RAW_COLORS)[ly.ci];
+// 기간 선택. step = 데이터 간격(분) — 기간이 달라도 점 수가 비슷하게 (실제: query_range의 step)
+const RES_RANGES = [
+  { k: '6h',  label: '6시간',  hours: 6,   step: 1 },
+  { k: '24h', label: '24시간', hours: 24,  step: 5 },
+  { k: '3d',  label: '3일',    hours: 72,  step: 10 },
+  { k: '7d',  label: '7일',    hours: 168, step: 20 },
+];
+let resRange = '7d';
+const RES_CACHE = {};
+const getRes = k => RES_CACHE[k] || (RES_CACHE[k] = buildRes(RES_RANGES.find(r => r.k === k)));
+function buildRes(rg) {
+  const STEP = rg.step * 60000;
+  const t1 = NOW.getTime(), t0 = t1 - rg.hours * 3600000;
+  const n = Math.round((t1 - t0) / STEP) + 1;
+  const t = Array.from({ length: n }, (_, i) => t0 + i * STEP);
+  const names = MOCK.pipeline.products.map(p => p.name);
+  const mem = {}, cpu = {};
+  // 층 = 제품 × DAG. pipeline 제품들을 아래에, raw_data 제품들을 그 위에 쌓음 (실제: sum by (product, dag))
+  const layers = [
+    ...names.map((nm, ci) => ({ key: nm + '|p', nm, dag: 'pipeline', ci })),
+    ...MOCK.rawData.products.map((p, ci) => ({ key: p.name + '|r', nm: p.name, dag: 'raw', ci })),
+  ];
+  layers.forEach(ly => { mem[ly.key] = new Array(n).fill(0); cpu[ly.key] = new Array(n).fill(0); });
+  const sum = (arr, k) => arr.reduce((a, p) => a + p[k].use, 0);
+  const DOWI = { 일: 0, 월: 1, 화: 2, 수: 3, 목: 4, 금: 5, 토: 6 };
+
+  // 실행 하나를 더함. 종료 = 피크가 peak, 실행중(endAt 없음) = 마지막 값이 now
+  function addRun(nm, start, durMin, live, peak, now, seed) {
+    const r = rng('res.' + seed);
+    const s = start.getTime(), e = live ? t1 : s + durMin * 60000;
+    const M = 400, ph = r() * 6;
+    let nm_ = 0, nc_ = 0;   // 완만한 흔들림 (점마다 튀지 않게)
+    const shape = Array.from({ length: M }, (_, j) => {
+      const x = j / (M - 1);
+      nm_ = nm_ * 0.9 + (r() - 0.5) * 0.1;
+      nc_ = nc_ * 0.85 + (r() - 0.5) * 0.3;
+      return { m: (1 - Math.exp(-6 * x - 0.15)) * (0.8 + 0.12 * Math.sin(x * 11 + ph) + nm_ * 0.5),
+               c: Math.max(0.2, 0.8 + nc_) };
+    });
+    const mk = live ? now.mem / shape[M - 1].m : peak.mem / Math.max(...shape.map(v => v.m));
+    const cAvg = shape.reduce((a, v) => a + v.c, 0) / M;
+    const ck = live ? now.cpu / shape[M - 1].c : peak.cpu / cAvg;
+    t.forEach((tt, i) => {
+      if (tt < s || tt > e) return;
+      const j = Math.round((tt - s) / (e - s || 1) * (M - 1));
+      mem[nm][i] += shape[j].m * mk; cpu[nm][i] += shape[j].c * ck;
+    });
+  }
+
+  // pipeline: 제품별 주 1회 (이번 주 + 지난 주)
+  MOCK.pipeline.products.forEach(p => {
+    const [day, hm] = (MOCK.schedule[p.name] || '').split(' ');
+    if (!day) return;
+    const [hh, mm] = hm.split(':').map(Number);
+    [0, 1].forEach(back => {
+      const st = new Date(NOW); st.setHours(hh, mm, 0, 0);
+      st.setDate(st.getDate() - ((st.getDay() - DOWI[day] + 7) % 7) - 7 * back);
+      if (st > NOW) return;
+      const status = p.history[p.history.length - 1 - back];
+      if (status === 'none' || status === 'sched') return;
+      const det = back === 0 ? MOCK.detail[p.name] : null;
+      const r = rng('resp.' + p.name + back);
+      const live = status === 'run';
+      const dur = live ? 0 : status === 'fail' ? lerp(120, 200, r()) : ((MOCK.thisWeek[p.name] || {}).durMin || lerp(270, 340, r()));
+      const now = live && det && det.pods ? { mem: sum(det.pods, 'mem'), cpu: sum(det.pods, 'cpu') } : null;
+      addRun(p.name + '|p', st, dur, live, { mem: lerp(85, 125, r()), cpu: lerp(5, 8, r()) }, now, p.name + back);
+    });
+  });
+
+  // raw_data: 전 제품 매일 1회
+  const RD = MOCK.rawData;
+  RD.products.forEach(p => {
+    const [hh, mm] = (RD.time[p.name] || '02:00').split(':').map(Number);
+    p.history.forEach((status, i) => {
+      if (status === 'none' || status === 'sched') return;
+      const back = p.history.length - 1 - i;
+      const st = new Date(NOW); st.setHours(hh, mm, 0, 0); st.setDate(st.getDate() - back);
+      if (st > NOW) return;
+      const r = rng('resr.' + p.name + back);
+      const today = back === 0 ? (RD.today[p.name] || {}) : {};
+      const live = status === 'run';
+      const long = r() < RD.profile.longRate;
+      const dur = today.durMin || (status === 'fail' ? lerp(5, 20, r()) : long ? lerp(...RD.profile.longDur, r()) : lerp(...RD.profile.dur, r()));
+      const now = live && today.pod ? { mem: today.pod.mem.use, cpu: today.pod.cpu.use } : null;
+      addRun(p.name + '|r', st, dur, live, { mem: RD.profile.memLim * lerp(...RD.profile.mem, r()), cpu: lerp(...RD.profile.cpu, r()) }, now, 'r' + p.name + back);
+    });
+  });
+
+  // 현재값 = 실행 중 Pod 합 (상세 화면 값과 동일)
+  const pipePods = Object.values(MOCK.detail).filter(d => d.status === 'run' && d.pods).flatMap(d => d.pods);
+  const rawPods = Object.values(RD.today).filter(d => d.pod).map(d => d.pod);
+  const cur = {
+    mem: sum(pipePods, 'mem') + sum(rawPods, 'mem'),
+    cpu: sum(pipePods, 'cpu') + sum(rawPods, 'cpu'),
+    pipePods: pipePods.length, rawPods: rawPods.length,
+  };
+  return { t, names, layers, mem, cpu, cur, hours: rg.hours };
+}
+let RES = getRes(resRange);
+
+function renderRes() {
+  const C = RES.cur;
+  // DPM 전체 한도(ResourceQuota)가 없어 현재 사용량만 표시
+  const box = (key, label, use, unit) => `<div class="rbox${resMetric === key ? ' on' : ''}" data-res="${key}">
+      <div class="k">${label}</div>
+      <div class="v">${use.toFixed(1)}<small>${unit}</small></div>
+    </div>`;
+  const isMem = resMetric === 'mem';
+  document.getElementById('p0').innerHTML = `<div class="res">
+    <div class="res-left">
+      <div class="res-title">DPM 리소스 현황</div>
+      <div class="res-boxes">
+        ${box('mem', '메모리', C.mem, 'GiB')}
+        ${box('cpu', 'CPU', C.cpu, 'core')}
+      </div>
+      <span class="live res-live"><i class="pd run"></i>실시간</span>
+    </div>
+    <div class="res-right">
+      <div class="res-head"><span class="unit">${isMem ? 'GiB' : 'core'}</span>
+        <select class="rsel" id="res-range" aria-label="기간">${RES_RANGES.map(r => `<option value="${r.k}"${r.k === resRange ? ' selected' : ''}>최근 ${r.label}</option>`).join('')}</select>
+      </div>
+      <div class="ts" id="res-chart" style="height:${resH}px"></div>
+    </div>
+  </div>
+  <button class="res-exp${resOpen ? ' open' : ''}" data-resexp aria-label="그래프 크게 보기"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
+  drawRes();
+}
+
+// 펼치기/접기: 높이를 매 프레임 바꿔 다시 그림 (글자 크기는 그대로 유지)
+const RES_H = { small: 150, big: 380 };
+let resOpen = false, resH = RES_H.small, resAnim = null;
+function animateResH(to) {
+  cancelAnimationFrame(resAnim);
+  const from = resH, t0 = performance.now(), dur = 320;
+  const ease = p => 1 - Math.pow(1 - p, 3);
+  const tick = now => {
+    const p = Math.min(1, (now - t0) / dur);
+    resH = Math.round(from + (to - from) * ease(p));
+    const el = document.getElementById('res-chart');
+    if (el) { el.style.height = resH + 'px'; drawRes(); }
+    if (p < 1) resAnim = requestAnimationFrame(tick);
+  };
+  resAnim = requestAnimationFrame(tick);
+}
+
+function drawRes() {
+  const el = document.getElementById('res-chart');
+  if (!el || !el.clientWidth) return;
+  const W = el.clientWidth, H = resH, L = 40, R = 72, T = 8, B = 20;
+  const { t, layers } = RES, data = RES[resMetric], n = t.length;
+  // 누적 (층 순서대로)
+  const cum = [];
+  let acc = new Array(n).fill(0);
+  layers.forEach(ly => { acc = acc.map((a, i) => a + data[ly.key][i]); cum.push(acc); });
+  const total = cum[cum.length - 1];
+  const ymax = Math.max(...total) * 1.12;
+  const t0 = t[0], t1 = t[n - 1];
+  const x = v => L + (W - L - R) * (v - t0) / (t1 - t0);
+  const y = v => T + (H - T - B) * (1 - v / ymax);
+  let s = `<svg width="${W}" height="${H}" class="tsv">`;
+  const step = [0.5, 1, 2, 5, 10, 20, 25, 50, 100, 200].find(v => v >= ymax / (H > 250 ? 8 : 4));   // 크게 보면 눈금도 촘촘하게
+  for (let v = step; v < ymax; v += step)
+    s += `<line class="gl" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="ax" x="${L - 4}" y="${y(v) + 3}" text-anchor="end">${v}</text>`;
+  if (RES.hours <= 24) {   // 시각 눈금 (6시간: 1시간 간격, 24시간: 3시간 간격). 자정은 날짜로
+    const iv = (RES.hours <= 6 ? 1 : 3) * 3600000;
+    for (let tk = Math.ceil(t0 / iv) * iv; tk <= t1; tk += iv) {
+      const dt = new Date(tk);
+      if (tk - t0 < iv * 0.3 || t1 - tk < iv * 0.3) continue;   // 양 끝에 너무 붙은 눈금은 생략
+      const mid = dt.getHours() === 0;
+      s += `<line class="${mid ? 'dl' : 'tk'}" x1="${x(tk)}" x2="${x(tk)}" y1="${T}" y2="${H - B}"/>`;
+      s += `<line class="xt" x1="${x(tk)}" x2="${x(tk)}" y1="${H - B}" y2="${H - B + 4}"/>`;
+      s += `<text class="ax" x="${x(tk)}" y="${H - 5}" text-anchor="middle">${mid ? md(dt) : pad(dt.getHours()) + ':00'}</text>`;
+    }
+  }
+  // 날짜 경계 (자정): 구분선 + x축 짧은 눈금 + 그 아래 가운데 날짜
+  const d0 = new Date(t0); d0.setHours(0, 0, 0, 0);
+  if (RES.hours > 24) for (let d = new Date(d0); d.getTime() <= t1; d.setDate(d.getDate() + 1)) {
+    const tm = d.getTime();
+    if (tm <= t0) continue;   // 그래프 시작 전 자정은 없음
+    s += `<line class="dl" x1="${x(tm)}" x2="${x(tm)}" y1="${T}" y2="${H - B}"/>`;
+    s += `<line class="xt" x1="${x(tm)}" x2="${x(tm)}" y1="${H - B}" y2="${H - B + 4}"/>`;
+    s += `<text class="ax" x="${x(tm)}" y="${H - 5}" text-anchor="middle">${md(d)}</text>`;
+  }
+  // 층 (아래 제품부터)
+  const P = arr => arr.map((v, i) => `${x(t[i]).toFixed(1)},${y(v).toFixed(1)}`);
+  cum.forEach((top, k) => {
+    const bot = k ? cum[k - 1] : new Array(n).fill(0);
+    s += `<path class="stk" fill="${layerColor(layers[k])}" d="M${P(top).join(' L')} L${P(bot).reverse().join(' L')} Z"/>`;
+  });
+  s += `<line class="base" x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}"/><text class="ax" x="${L - 4}" y="${y(0) + 3}" text-anchor="end">0</text>`;
+  // 지금 합계
+  const cv = total[n - 1];
+  s += `<circle class="now" cx="${x(t1)}" cy="${y(cv)}" r="3.5"/><text class="lt nowv" x="${W - R + 8}" y="${Math.min(y(cv) + 3, H - B - 2)}">${cv.toFixed(1)} ${resMetric === 'mem' ? 'GiB' : 'core'}</text>`;
+  s += `<line class="hv" id="res-hv" x1="0" x2="0" y1="${T}" y2="${H - B}" style="display:none"/>`;
+  el.innerHTML = s + '</svg>';
+  el._geo = { L, R, W, t0, t1 };
+}
+
+// 그래프 위 마우스: 그 시각의 제품별 값 (전역 tooltip이 data-tip을 읽음)
+document.getElementById('p0').addEventListener('mousemove', e => {
+  const el = e.target.closest('#res-chart');
+  if (!el || !el._geo) return;
+  const g = el._geo, rc = el.getBoundingClientRect();
+  const px = e.clientX - rc.left;
+  const hv = document.getElementById('res-hv');
+  if (px < g.L || px > g.W - g.R) { delete el.dataset.tip; delete el.dataset.tipHtml; hv.style.display = 'none'; return; }
+  const i = Math.round((px - g.L) / (g.W - g.L - g.R) * (RES.t.length - 1));
+  const tt = new Date(RES.t[i]), data = RES[resMetric], unit = resMetric === 'mem' ? 'GiB' : 'core';
+  // 제품 · DAG 구분 없이 한 목록, 큰 값부터. 앞에 그래프 층 색 표시
+  const sw = c => `<i class="tsw" style="background:${c}"></i>`;
+  const rows = RES.layers.filter(ly => data[ly.key][i] > 0.05)
+    .sort((a, b) => data[b.key][i] - data[a.key][i])
+    .map(ly => `${sw(layerColor(ly))}${`${ly.nm} (${ly.dag === 'raw' ? 'raw' : 'pipe'})`.padEnd(12)}${data[ly.key][i].toFixed(1).padStart(7)}`);
+  const tot = RES.layers.reduce((a, ly) => a + data[ly.key][i], 0);
+  el.dataset.tip = '1';   // 전역 tooltip이 이 칸을 대상으로 잡게 함
+  el.dataset.tipHtml = `${md(tt)} (${DOW[tt.getDay()]}) ${pad(tt.getHours())}:${pad(tt.getMinutes())}\n${sw('transparent')}합계${' '.repeat(8)}${tot.toFixed(1).padStart(7)} ${unit}${rows.length ? '\n' + rows.join('\n') : ''}`;
+  const hx = g.L + (g.W - g.L - g.R) * i / (RES.t.length - 1);
+  hv.setAttribute('x1', hx); hv.setAttribute('x2', hx); hv.style.display = '';
+});
+document.getElementById('p0').addEventListener('mouseleave', () => {
+  const hv = document.getElementById('res-hv'); if (hv) hv.style.display = 'none';
+});
+document.getElementById('p0').addEventListener('click', e => {
+  const x = e.target.closest('[data-resexp]');
+  if (x) {
+    resOpen = !resOpen;
+    x.classList.toggle('open', resOpen);
+    animateResH(resOpen ? RES_H.big : RES_H.small);
+    return;
+  }
+  const b = e.target.closest('[data-res]');
+  if (!b || b.dataset.res === resMetric) return;
+  resMetric = b.dataset.res;
+  renderRes();
+});
+window.addEventListener('resize', drawRes);
+// 기간 드롭다운
+document.getElementById('p0').addEventListener('change', e => {
+  if (e.target.id !== 'res-range') return;
+  resRange = e.target.value;
+  RES = getRes(resRange);
+  renderRes();
+});
+
 /* ---------- tooltip ---------- */
 const tip = document.getElementById('tip');
 document.addEventListener('mousemove', e => {
   const t = e.target.closest('[data-tip]');
   if (!t) { tip.style.display = 'none'; return; }
-  tip.textContent = t.dataset.tip;
+  if (t.dataset.tipHtml) tip.innerHTML = t.dataset.tipHtml;   // 색 표시 등 HTML이 필요한 툴팁 (값은 코드가 만든 것만)
+  else tip.textContent = t.dataset.tip;
   tip.style.display = 'block';
   const x = Math.min(e.clientX + 12, window.innerWidth - tip.offsetWidth - 8);
   tip.style.left = x + 'px';
@@ -1703,6 +2048,7 @@ document.addEventListener('mousemove', e => {
 document.getElementById('meta').textContent =
   `기준 ${md(NOW)} (${DOW[NOW.getDay()]}) ${pad(NOW.getHours())}:${pad(NOW.getMinutes())} · 목업 데이터`;
 document.getElementById('legend1').innerHTML = legendHtml();
+renderRes();
 renderPipeline();
 // 처음 그린 pipeline 격자 높이로 상자 고정 → raw_data로 바꿔도 크기 유지
 { const gb = document.getElementById('gridbox'); if (gb.offsetHeight) gb.style.minHeight = gb.offsetHeight + 'px'; }
